@@ -1,0 +1,38 @@
+body {
+    padding-left: 20px;
+	font-family: sans-serif;
+}
+
+select {
+    min-width: 80px;
+}
+
+.controls {
+    width: 80px;
+}
+
+#time {
+    width: 175px;
+}
+
+#volume {
+    width: 247px;
+}
+
+tr {
+    cursor: pointer;
+}
+
+td {
+    padding: 5px;
+}
+
+.drag {
+    width: 20px;
+}
+
+a {
+    display: block;
+    color: black;
+    text-decoration: none;
+}

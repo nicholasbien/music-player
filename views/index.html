@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Music Player</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+
+<body>
+    <select data-bind="value: currentPlaylist, options: playlists, optionsText: 'name'">
+    </select>
+    <button data-bind="click: function() { newPlaylistFormVisible(true) }, visible: !newPlaylistFormVisible()">Create New Playlist</button>
+    <form data-bind="submit: addPlaylist, visible: newPlaylistFormVisible">
+        <br>
+        <input data-bind="value: newPlaylistName">
+        <button type="submit">Submit</button>
+        <button type="button" data-bind="click: function() { newPlaylistFormVisible(false); }">Cancel</button>
+    </form>
+    <br>
+    <br>
+    <button class="controls" data-bind="click: previousButtonClick">Previous</button>
+    <button class="controls" data-bind="click: playButtonClick, text: playButtonText"></button>
+    <button class="controls" data-bind="click: nextButtonClick">Next</button>
+    <br>
+    <br>
+    <span data-bind="text: parseInt(currentTime() / 60, 10) + ':' + ('0' + parseInt(currentTime()) % 60).slice(-2)"></span>
+    <input id="time" type="range" data-bind="value: audioPosition">
+    <span data-bind="if: totalTime()">
+        <span data-bind="text: parseInt(totalTime() / 60, 10) + ':' + ('0' + parseInt(totalTime()) % 60).slice(-2)"></span>
+    </span>
+    <br>
+    <input id="volume" type="range" data-bind="value: volumeLevel">
+    <br>
+    <br>
+    <span data-bind="if: currentSong() != null">
+        <span data-bind="text: currentSong().artist + ' - ' + currentSong().title"></span>
+    </span>
+    <br>
+    <br>
+    <span data-bind="if: currentPlaylist() != null">
+        <span data-bind="text: currentPlaylist().name"></span>
+    </span>
+    <button data-bind="click: function() { reorderBoxVisible(true); }, visible: currentPlaylist() != null && !reorderBoxVisible() && !renameBoxVisible()">Reorder</button>
+    <button data-bind="visible: reorderBoxVisible, click: reorderSongs">Submit</button>
+    <button data-bind="visible: reorderBoxVisible, click: function() { reorderBoxVisible(false); }">Cancel</button>
+    <button data-bind="click: function() { renameBoxVisible(true); }, visible: currentPlaylist() != null && !renameBoxVisible() && !reorderBoxVisible()">Rename</button>
+    <input id="rename-box" data-bind="visible: renameBoxVisible" placeholder="New Playlist">
+    <button data-bind="visible: renameBoxVisible, click: renamePlaylist">Submit</button>
+    <button data-bind="visible: renameBoxVisible, click: function() { renameBoxVisible(false); }">Cancel</button>
+    <button data-bind="visible: currentPlaylist() != null && !reorderBoxVisible() && !renameBoxVisible(), click: deletePlaylist">Delete</button>
+    <br>
+    <br>
+    <table data-bind="foreach: songs">
+        <tr>
+            <td class="number">
+                <span data-bind="text: $parent.songs.indexOf($data) + 1, click: function() { $parent.songClick($data) }"></span>
+            </td>
+            <td class="title">
+                <span data-bind="text: title, click: function() { $parent.songClick($data) }"></a>
+            </td>
+            <td class="artist">
+                <span data-bind="text: artist, click: function() { $parent.songClick($data) }"></a>
+            </td>
+            <td data-bind="visible: $parent.reorderBoxVisible">
+                <input class="reorder-box" type="text" placeholder="New Position">
+            </td>
+            <td class="delete">
+                <button data-bind="click: function() { $parent.deleteSong($data) }, clickBubble: false">Delete</button>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <button data-bind="visible: currentPlaylist() != null && !newSongFormVisible(), click: function() { newSongFormVisible(true); }">Add Song</button>
+    <form data-bind="submit: addSong, visible: newSongFormVisible">
+        <input id="new-song-url" placeholder="URL">
+        <br>
+        <br>
+        <input id="new-song-title" placeholder="Title">
+        <br>
+        <br>
+        <input id="new-song-artist" placeholder="Artist">
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+        <button type="button" data-bind="click: function() { newSongFormVisible(false) }">Cancel</button>
+    </form>
+
+    <script type="text/javascript" src="/js/lib/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/js/lib/knockout-3.3.0.js"></script>
+    <script type="text/javascript" src="/js/script.js"></script>
+
+</body>
+
+</html>
