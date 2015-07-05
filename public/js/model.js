@@ -80,7 +80,6 @@
 	var requestStream = function(url, callback) {
 		var request = new XMLHttpRequest();
 		request.addEventListener('load', function(event) {
-			console.log(request.responseText);
 			callback(JSON.parse(request.responseText));
 		});
         request.open('GET', '/search?url=' + url);
