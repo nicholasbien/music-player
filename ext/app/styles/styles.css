@@ -11,7 +11,6 @@ body {
 }
 
 #option-table {
-    font-size: 20px;
     color: rgba(255, 255, 255, 0.6);
     width: 225px;
     border-collapse: collapse;
@@ -29,7 +28,7 @@ body {
 }
 
 button {
-    font-size: 20px;
+    font-size: 14px;
     color: rgba(255, 255, 255, 0.6);
     background-color: transparent;
     background-repeat :no-repeat;
@@ -218,7 +217,7 @@ input[type=range]::-ms-fill-upper {
     color: rgba(255, 255, 255, 0.3);
     padding-left: 8px;
     padding-top: 3px;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
 }
 
@@ -226,10 +225,14 @@ input[type=range]::-ms-fill-upper {
     color: rgba(255, 255, 255, 0.6);
 }
 
+#add-playlist {
+    padding-bottom: 3px;
+}
+
 #add-playlist, #playlist-title {
     color: rgba(255, 255, 255, 0.3);
     text-align: center;
-    font-size: 16px;
+    font-size: 13px;
     cursor: pointer;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
