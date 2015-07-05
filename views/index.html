@@ -6,70 +6,43 @@
 </head>
 
 <body>
-	<select id="playlist-select" onchange="playlistSelect(this)"></select>
-	<button id="new-playlist-button" onclick="
-		hide(this.id);
-		show('new-playlist-form');
-		hide('edit-playlist-button');"
-	>New Playlist</button>
-	<form id="new-playlist-form" style="display:none" onsubmit="
-		event.preventDefault();
-		this.reset();
-		hide('new-playlist-form');
-		show('edit-playlist-button');
-		show('new-playlist-button');">
+	<select id="playlist-select"></select>
+	<button id="new-playlist-button">New Playlist</button>
+	<form id="new-playlist-form">
 		<input id="new-playlist-name" placeholder="New Playlist">
-		<button onclick="addPlaylistButtonClick()">Submit</button>
+		<button id="new-playlist-submit">Submit</button>
 		<button>Cancel</button>
 	</form>
-	<button id="edit-playlist-button" onclick="
-		hide(this.id);
-		hide('new-playlist-button');
-		show('edit-playlist-form');
-		showClass('song-edit-buttons');"
-	>Edit Playlist</button>
-	<form id="edit-playlist-form" style="display:none" onsubmit="
-		event.preventDefault();
-		this.reset();
-		show('new-playlist-button');
-		hide('edit-playlist-form');
-		hideClass('song-edit-buttons');
-		show('edit-playlist-button')">
-		<button onclick="removePlaylistButtonClick()">Delete Playlist</button>
+	<button id="edit-playlist-button">Edit Playlist</button>
+	<form id="edit-playlist-form">
+		<button id="delete-playlist-button">Delete Playlist</button>
 		<input id="rename-playlist-box" placeholder="Rename Playlist">
-		<button onclick="editPlaylistButtonClick()">Done</button>
+		<button id="edit-playlist-submit">Done</button>
 		<button>Cancel</button>
 	</form>
 	<br>
 	<br>
-	<button onclick="muteButtonClick()">Mute</button>
-	<input id="volume" type="range" value="100" onmousemove="volumeChange(this)" onchange="volumeChange(this)">
+	<button id="mute-button">Mute</button>
+	<input id="volume" type="range" value="100">
 	<br>
 	<br>
 	<span id="current-song">Now Playing: </span>
 	<br>
 	<br>
 	<span id="elapsedTime">0:00</span>
-	<input id="time" type="range" value ="0" onmousedown="mouseDownOnTime(this)" onchange="timeChange(this)">
+	<input id="time" type="range" value ="0">
 	<span id="songTime">-:--</span>
 	<br>
 	<br>
-	<button id="previous-button" class="controls" onclick='previousButtonClick()'>Previous</button>
-	<button id="play-button" class="controls" onclick='playButtonClick()'>Play</button>
-	<button id="next-button" class="controls" onclick='nextButtonClick()'>Next</button>
+	<button id="previous-button" class="controls">Previous</button>
+	<button id="play-button" class="controls">Play</button>
+	<button id="next-button" class="controls">Next</button>
 	<br>
 	<br>
 	<table id="song-table"></table>
 	<br>
-	<button id="new-song-button" style="display:none" onclick="
-		show('new-song-form');
-		hide(this.id);"
-	>Add Song</button>
-	<form id="new-song-form" style="display:none" onsubmit="
-		event.preventDefault();
-		this.reset(); 
-		hide('new-song-form'); 
-		show('new-song-button')">
+	<button id="new-song-button">Add Song</button>
+	<form id="new-song-form">
 		<input id="new-song-url" placeholder="URL">
 		<br>
 		<br>
@@ -79,7 +52,7 @@
 		<input id="new-song-artist" placeholder="Artist">
 		<br>
 		<br>
-		<button onclick="addSongButtonClick()">Submit</button>
+		<button id="new-song-submit">Submit</button>
 		<button>Cancel</button>
 	</form>
 
@@ -89,8 +62,8 @@
 	<script src="/js/model.js"></script>
 	<script src="/js/view.js"></script>
 
-
 	<script src="/js/utils.js"></script>
 	<script src="/js/script.js"></script>
+	<script src="/js/handler.js"></script>
 
 </body>
