@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "ejs": "^2.3.1",
-    "express": "^4.13.0",
-    "youtube-dl": "^1.10.5"
+    "express": "^4.13.0"
   }
 }

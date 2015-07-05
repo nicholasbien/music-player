@@ -1,15 +1,19 @@
-var http = require('http');
-console.log('here');
+var exec = require('child_process').exec;
+
 module.exports = function(app) {
-	app.get('/#', function(request, response) {
-		console.log('server');
-		/*
-		var url = request.request.url;
-		var options = [ '-g', '-x'];
-		youtubedl.getInfo(url, options, function(error, info) {
-			if (error) callback(error);
-			callback(null, error);
+	app.get('/', function(req, res) {
+		res.render('index.html');
+	});
+
+	app.get('/search', function(req, res) {
+		var cmd = 'youtube-dl -x -g ' + req.query.url;
+		exec(cmd, function(error, stdout, stderr) {
+			if (stderr) {
+				res.status(400).json(stderr);
+			} else {
+				var streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"");
+				res.status(200).json(streamUrl);
+			}
 		});
-	*/
 	});
 }

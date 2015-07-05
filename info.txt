@@ -1,0 +1,9 @@
+Current Issues:
+
+Long load time on first play after refresh.
+Volume slider doesn't change until mouse move after mouse click.
+Clicking song/pressing play shortly after adding song throws an error because song.streamUrl is undefined.
+
+Additional features:
+Library that stores all songs.
+Replay/shuffle/queue.
