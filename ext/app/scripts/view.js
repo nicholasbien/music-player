@@ -1,6 +1,22 @@
 (function(window, document) {
 	var View = {};
 
+
+	View.showPlaylists = function() {
+		playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+		var str = "";
+		playlists = playlists.reverse();
+		playlists.forEach(function(playlist) {
+			str = str + '<div class="playlist-name">' + playlist.name + '</div>';
+		});
+		$('#playlist-names-container').innerHTML = str;
+		playlists = playlists.reverse();
+	}
+
+	View.addPlaylist = function(name) {
+		$('#playlist-names-container').innerHTML = '<div class="playlist-name">' + name + '</div>' + $('#playlist-names-container').innerHTML;
+	}
+
 	View.displayNewPlaylist = function(name) {
 		var option = create('option');
 		option.innerHTML = name;

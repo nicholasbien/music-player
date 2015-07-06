@@ -1,57 +1,104 @@
-var hoverImgChangeId = ["open-up-img", "left-seek", "play", "right-seek"];
 
-function imgOn() {
-	var src = this.getAttribute("src");
-	var newSrc = src.substring(0, src.length - 7) + "on.png";
-  this.setAttribute("src", newSrc);
-}
 
-function imgOff() {
-	var src = this.getAttribute("src");
-	var newSrc = src.substring(0, src.length - 6) + "off.png";
-  this.setAttribute("src", newSrc);
-}
+(function(window, document) {
 
-for (var i = 0; i < hoverImgChangeId.length; i++) {
-	document.getElementById(hoverImgChangeId[i]).addEventListener("mouseover", imgOn, false);
-	document.getElementById(hoverImgChangeId[i]).addEventListener("mouseout", imgOff, false);
-}
+  $('#playlist-submit').addEventListener('click', function () {
+    if ($('#playlist-submit-input').value.length == 0) {
+      $('#playlist-submit-input').style.border = "1px solid rgba(255, 0, 0, 0.5)";
+      setTimeout(function() {
+        $('#playlist-submit-input').style.border = "1px solid rgba(255, 255, 255, 0.2)";
+      }, 1500);
+    } else {
+      Model.addNewPlaylist($('#playlist-submit-input').value);
+      Model.saveChanges();
+      View.addPlaylist($('#playlist-submit-input').value);
+      hide('add-playlist-execute');
+      $('#playlist-submit-input').value = "";
+      $('#add-playlist').style.display = 'block';
+    }
+  });
 
-document.getElementById("open-up-img").addEventListener("click", function() {
-	if (document.getElementById("song-info-container").style.borderTop != "") {
-		this.setAttribute("src", "./images/open-on.png");
-		document.getElementById("song-info-container").style.borderTop = "";
-		document.getElementById("option-container").style.display = "none";
-		document.getElementById("add-playlist-execute").style.display = "none";
-		document.getElementById("add-container").style.display = "none";
-		document.getElementById("playlist-container").style.display = "none";
-		document.getElementById("playlists-container").style.display = "none";
-		document.getElementById("add-playlist").style.display = "none";
-	} else {
-		this.setAttribute("src", "./images/close-on.png");
-		document.getElementById("song-info-container").style.borderTop = "1px solid rgba(255, 255, 255, 0.3)";
-		document.getElementById("option-container").style.display = "inline";
-		document.getElementById("playlists-container").style.display = "inline";
-	}
-});
+/*
 
-document.getElementById("add-playlist").addEventListener("click", function() {
-	this.style.display = "none";
-	document.getElementById("add-playlist-execute").style.display = "inline";
-});
+    $('#playlist-select').addEventListener('change', function() {
+        playlistSelect($('#playlist-select'));
+    });
 
-document.getElementById("option-playlists-button").addEventListener("click", function() {
-	document.getElementById("add-playlist-execute").style.display = "none";
-	document.getElementById("add-container").style.display = "none";
-	document.getElementById("playlist-container").style.display = "none";
-	document.getElementById("playlists-container").style.display = "inline";
-	document.getElementById("add-playlist").style.display = "block";
-});
+    $('#new-playlist-button').addEventListener('click', function() {
+        hide('new-playlist-button');
+        show('new-playlist-form');
+        hide('edit-playlist-button');
+    });
 
-document.getElementById("option-song-button").addEventListener("click", function() {
-	document.getElementById("add-playlist-execute").style.display = "none";
-	document.getElementById("playlist-container").style.display = "none";
-	document.getElementById("playlists-container").style.display = "none";
-	document.getElementById("add-playlist").style.display = "none";
-	document.getElementById("add-container").style.display = "inline";
-});
+    $('#new-playlist-form').style.display = 'none';
+    $('#new-playlist-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        $('#new-playlist-form').reset();
+        hide('new-playlist-form');
+        show('edit-playlist-button');
+        show('new-playlist-button');
+    });
+
+    $('#new-playlist-submit').addEventListener('click', addPlaylistButtonClick);
+
+    $('#edit-playlist-button').addEventListener('click', function() {
+        hide('edit-playlist-button');
+        hide('new-playlist-button');
+        show('edit-playlist-form');
+        showClass('song-edit-buttons');
+    });
+
+    $('#edit-playlist-form').style.display = 'none';
+    $('#edit-playlist-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        $('#edit-playlist-form').reset();
+        show('new-playlist-button');
+        hide('edit-playlist-form');
+        hideClass('song-edit-buttons');
+        show('edit-playlist-button');
+    });
+
+    $('#delete-playlist-button').addEventListener('click', removePlaylistButtonClick);
+
+    $('#edit-playlist-submit').addEventListener('click', editPlaylistButtonClick);
+
+    $('#mute-button').addEventListener('click', muteButtonClick);
+
+    $('#volume').addEventListener('mousemove', function() {
+        volumeChange($('#volume'));
+    });
+
+    $('#volume').addEventListener('change', function() {
+        volumeChange($('#volume'));
+    });
+
+    $('#time').addEventListener('mousedown', function() {
+        mouseDownOnTime($('#time'));
+    });
+
+    $('#time').addEventListener('change', function() {
+        timeChange($('#time'));
+    });
+
+    $('#previous-button').addEventListener('click', previousButtonClick);
+    $('#play-button').addEventListener('click', playButtonClick);
+    $('#next-button').addEventListener('click', nextButtonClick);
+
+    $('#new-song-button').style.display = 'none';
+    $('#new-song-button').addEventListener('click', function() {
+        show('new-song-form');
+        hide(this.id);
+    });
+
+    $('#new-song-form').style.display = 'none';
+    $('#new-song-form').addEventListener('submit', function() {
+        event.preventDefault();
+        $('#new-song-form').reset();
+        hide('new-song-form');
+        show('new-song-button');
+    });
+
+    $('#new-song-submit').addEventListener('click', addSongButtonClick);
+*/
+
+})(this, this.document);

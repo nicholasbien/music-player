@@ -5,13 +5,6 @@
 
 	Model.loadPlaylists = function() {
 		playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-		playlists.forEach(function(playlist) {
-			playlist.songs.forEach(function(song) {
-				requestStream(song.url, function(streamUrl) {
-					song.streamUrl = streamUrl;
-				});
-			});
-		});
 		return playlists[0] || null;
 	}
 
@@ -34,7 +27,6 @@
 			songs: []
 		}
 		playlists.push(playlist);
-		return playlist;
 	}
 
 	Model.addNewSong = function(playlist, url, title, artist) {
@@ -104,4 +96,5 @@
     }
 
 	window.Model = Model;
+	Model.loadPlaylists();
 })(this, this.document);

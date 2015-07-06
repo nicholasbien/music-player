@@ -265,6 +265,7 @@ input[type=range]::-ms-fill-upper {
 #playlist-submit-input {
     font-size: 10px;
     text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #open-up-img, #left-seek, #right-seek, #play, #pause {
