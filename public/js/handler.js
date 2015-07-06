@@ -57,7 +57,7 @@
     });
 
     $('#time').addEventListener('change', function() {
-        changeTime($('#time'));
+        timeChange($('#time'));
     });
 
     $('#previous-button').addEventListener('click', previousButtonClick);

@@ -140,7 +140,6 @@
             return null;
         }
     	var index = currentPlaylist.songs.indexOf(currentSong);
-        console.log(index);
     	if (index === 0 || index === -1) {
     		return null;
     	} else {
