@@ -268,6 +268,10 @@ input[type=range]::-ms-fill-upper {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+#playlist-submit-input:hover {
+    border: 1px solid rgba(255, 255, 255, 0.5);    
+}
+
 #open-up-img, #left-seek, #right-seek, #play, #pause {
     cursor: pointer;
 }
