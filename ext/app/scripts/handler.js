@@ -1,7 +1,5 @@
 
 
-(function(window, document) {
-
   $('#playlist-submit').addEventListener('click', function () {
     if ($('#playlist-submit-input').value.length == 0) {
       $('#playlist-submit-input').style.border = "1px solid rgba(255, 0, 0, 0.5)";
@@ -100,5 +98,3 @@
 
     $('#new-song-submit').addEventListener('click', addSongButtonClick);
 */
-
-})(this, this.document);

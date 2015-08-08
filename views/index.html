@@ -6,58 +6,68 @@
 </head>
 
 <body>
-	<select id="playlist-select"></select>
-	<button id="new-playlist-button">New Playlist</button>
-	<form id="new-playlist-form">
-		<input id="new-playlist-name" placeholder="New Playlist">
-		<button id="new-playlist-submit">Submit</button>
-		<button>Cancel</button>
-	</form>
-	<button id="edit-playlist-button">Edit Playlist</button>
-	<form id="edit-playlist-form">
-		<button id="delete-playlist-button">Delete Playlist</button>
-		<input id="rename-playlist-box" placeholder="Rename Playlist">
-		<button id="edit-playlist-submit">Done</button>
-		<button>Cancel</button>
-	</form>
-	<br>
-	<br>
-	<button id="mute-button">Mute</button>
-	<input id="volume" type="range" value="100">
-	<br>
-	<br>
-	<span id="current-song">Now Playing: </span>
-	<br>
-	<br>
-	<span id="elapsedTime">0:00</span>
-	<input id="time" type="range" value ="0">
-	<span id="songTime">-:--</span>
-	<br>
-	<br>
-	<button id="previous-button" class="controls">Previous</button>
-	<button id="play-button" class="controls">Play</button>
-	<button id="next-button" class="controls">Next</button>
-	<br>
-	<br>
-	<table id="song-table"></table>
-	<br>
-	<button id="new-song-button">Add Song</button>
-	<form id="new-song-form">
-		<input id="new-song-url" placeholder="URL">
-		<br>
-		<br>
-		<input id="new-song-title" placeholder="Title">
-		<br>
-		<br>
-		<input id="new-song-artist" placeholder="Artist">
-		<br>
-		<br>
-		<button id="new-song-submit">Submit</button>
-		<button>Cancel</button>
-	</form>
-
-
-
+	<div id="header">
+		<span id="header-title">Music Player</span>
+	</div>
+	<div id="left-panel">
+		<span id="playlists-header">Playlists</span>
+		<ul id="playlist-select"></ul>
+		<button id="new-playlist-button">New Playlist</button>
+		<form id="new-playlist-form">
+			<input id="new-playlist-name" placeholder="New Playlist">
+			<button id="new-playlist-submit">Submit</button>
+			<button>Cancel</button>
+		</form>
+		<button id="edit-playlist-button">Edit Playlist</button>
+		<form id="edit-playlist-form">
+			<button id="delete-playlist-button">Delete Playlist</button>
+			<input id="rename-playlist-box" placeholder="Rename Playlist">
+			<button id="edit-playlist-submit">Done</button>
+			<button>Cancel</button>
+		</form>
+	</div>
+	
+	<div id="right-panel">
+		<table id="song-table">
+			<thead>
+				<tr>
+					<th class="song-number">#</th>
+					<th class="song-title">Song</th>
+					<th class="song-artist">Artist</th>
+					<th class="song-edit-buttons"></th>
+				</tr>
+			</thead>
+			<tbody id="songs"></tbody>
+		</table>
+		<button id="new-song-button">Add Song</button>
+		<form id="new-song-form">
+			<input id="new-song-url" placeholder="URL">
+			<input id="new-song-title" placeholder="Title">
+			<input id="new-song-artist" placeholder="Artist">
+			<button id="new-song-submit">Submit</button>
+			<button>Cancel</button>
+		</form>
+	</div>
+	<div id="footer">
+		<div class="left">
+			<span id="current-song"></span>
+		</div>
+		<div class="right">
+			<label>&#x2212</label>
+			<input id="volume" type="range" value="100">
+			<label>+</label>
+		</div>
+		<div class="right">
+			<button id="previous-button" class="controls">|&lt;</button>
+			<button id="play-button" class="controls">&gt;</button>
+			<button id="next-button" class="controls">&gt;|</button>
+		</div>
+		<div class="right">
+			<label id="elapsedTime">0:00</label>
+			<input id="time" type="range" value ="0">
+			<label id="songTime">-:--</label>
+		</div>
+	</div>
 
 	<script src="/js/model.js"></script>
 	<script src="/js/view.js"></script>

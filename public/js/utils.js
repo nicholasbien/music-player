@@ -1,35 +1,39 @@
 (function(window, document) {
 
 	$ = function(selector) {
-		if (selector[0] === '#') {
-			return document.getElementById(selector.substring(1));
-		} else if (selector[0] === '.') {
-			return document.getElementsByClassName(selector.substring(1));
-		}
-		return null;
-	}
-
-	hide = function(id) {
-		var element = document.getElementById(id);
-		element.style.display = 'none';
-	}
-
-	show = function(id) {
-		var element = document.getElementById(id);
-		element.style.display = 'inline';
-	}
-
-	showClass = function(className) {
-		var elements = document.getElementsByClassName(className);
-		for (var i = 0; i < elements.length; i++) {
-			elements[i].style.display = 'inline';
+		var results = document.querySelectorAll(selector);
+		if (results.length === 0) {
+			return null;
+		} else if (results.length == 1) {
+			return document.querySelector(selector);
+		} else {
+			return results;
 		}
 	}
 
-	hideClass = function(className) {
-		var elements = document.getElementsByClassName(className);
-		for (var i = 0; i < elements.length; i++) {
-			elements[i].style.display = 'none';
+	show = function(selector) {
+		var elements = $(selector);
+		if (elements) {
+			if (elements instanceof NodeList) {
+				for (var i = 0; i < elements.length; i++) {
+					elements[i].style.display = 'block';
+				}
+			} else {
+				elements.style.display = 'block';
+			}
+		}
+	}
+
+	hide = function(selector) {
+		var elements = $(selector);
+		if (elements) {
+			if (elements instanceof NodeList) {
+				for (var i = 0; i < elements.length; i++) {
+					elements[i].style.display = 'none';
+				}
+			} else {
+				elements.style.display = 'none';
+			}
 		}
 	}
 

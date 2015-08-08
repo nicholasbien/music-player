@@ -7,7 +7,7 @@
         currentPlaylist = Model.loadPlaylists();
         View.displayAllPlaylists(Model.getAllPlaylists());
         if (currentPlaylist) {
-            View.selectPlaylist(Model.getIndexOfPlaylist(currentPlaylist));
+            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
             View.displayAllSongs(currentPlaylist, songClick);
         }
     });
@@ -54,13 +54,14 @@
 		currentPlaylist = Model.addNewPlaylist(name);
 		View.displayNewPlaylist(name, currentPlaylist);
         View.displayAllSongs(currentPlaylist, songClick);
+        View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
 	}
 
-	playlistSelect = function(select) {
-		var selected = select.options[select.options.selectedIndex];
-		currentPlaylist = Model.getPlaylistByName(selected.name);
-		$('#song-table').innerHTML = '';
+	playlistSelect = function(selected) {
+        currentPlaylist = Model.getPlaylistByName(selected.innerHTML);
+		$('#songs').innerHTML = '';
         View.displayAllSongs(currentPlaylist, songClick);
+        View.selectPlaylist(selected);
 	}
 
     songClick = function(tr) {
@@ -202,6 +203,7 @@
         View.displayAllPlaylists(Model.getAllPlaylists());
         currentPlaylist = Model.getAllPlaylists()[0] || null;
         View.displayAllSongs(currentPlaylist, songClick);
+        View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
     }
 
 })(this, this.document);

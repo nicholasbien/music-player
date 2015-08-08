@@ -2,16 +2,18 @@
 	var View = {};
 
 	View.displayNewPlaylist = function(name) {
-		var option = create('option');
-		option.innerHTML = name;
-		option.name = name;
-		option.selected = true;
-		$('#playlist-select').add(option);
-		show('new-song-button');
+		var li = create('li');
+		li.innerHTML = name;
+		$('#playlist-select').appendChild(li);
+		show('#new-song-button');
 	}
 
-	View.selectPlaylist = function(index) {
-		$('#playlist-select').options.selectedIndex = index;
+	View.selectPlaylist = function(li) {
+		var previous = $('#playlist-select > .selected');
+		if (previous) {
+			previous.className = '';
+		}
+		li.className = 'selected';
 	}
 
 	View.displayNewSong = function(id, title, artist, callback) {
@@ -20,27 +22,31 @@
 		tr.onclick = function() { callback(this); };
 		var td = create('td');
 		td.innerHTML = id + 1;
+		td.class = 'song-number';
 		tr.appendChild(td);
 		td = create('td');
 		td.innerHTML = title;
+		td.className = 'song-title';
 		tr.appendChild(td);
 		td = create('td');
 		td.innerHTML = artist;
+		td.className = 'song-artist';
 		tr.appendChild(td);
 		td = create('td');
 		td.className = 'song-edit-buttons';
 		if ($('#edit-playlist-button').style.display !== 'none') {
-			td.style.display = 'none'
+			td.style.display = 'none';
+			$('th.song-edit-buttons').style.display = 'none';
 		}
-		td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Move Up</button>' +
-		               '<button onclick="moveDownButtonClick(event, this)">Move Down</button>' +
+		td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Up</button>' +
+		               '<button onclick="moveDownButtonClick(event, this)">Down</button>' +
 		               '<button onclick="removeSongButtonClick(event, this)">Delete</button>';
 		tr.appendChild(td);
-		$('#song-table').appendChild(tr);
+		$('#songs').appendChild(tr);
 	}
 
 	View.displayAllSongs = function(playlist, callback) {
-		$('#song-table').innerHTML = '';
+		$('#songs').innerHTML = '';
 		if (playlist) {
 		    playlist.songs.forEach(function(song, index) {
 	            View.displayNewSong(index, song.title, song.artist, callback);
@@ -74,17 +80,17 @@
 
     View.setPlayButtonText = function(paused) {
     	if (paused) {
-    		$('#play-button').innerHTML = 'Play';
+    		$('#play-button').innerHTML = '&gt;';
     	} else {
-    		$('#play-button').innerHTML = 'Pause';
+    		$('#play-button').innerHTML = '| |';
     	}
     }
 
     View.displayCurrentSong = function(song) {
     	if (!song) {
-    		$('#current-song').innerHTML = 'Now Playing: '
+    		$('#current-song').innerHTML = ''
     	} else {
-    		$('#current-song').innerHTML = 'Now Playing: ' + song.artist + ' - ' + song.title;
+    		$('#current-song').innerHTML = song.artist + ' - ' + song.title;
     	}
     }
 

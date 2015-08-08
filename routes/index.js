@@ -6,7 +6,7 @@ module.exports = function(app) {
 	});
 
 	app.get('/search', function(req, res) {
-		var cmd = 'youtube-dl -x -g ' + req.query.url;
+		var cmd = 'youtube-dl -x -g --no-cache-dir --no-warnings ' + req.query.url;
 		exec(cmd, function(error, stdout, stderr) {
 			if (stderr) {
 				res.status(400).json(stderr);
