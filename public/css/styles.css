@@ -40,24 +40,28 @@ select {
     border: none;
 }
 
-.song-edit-buttons th {
+#song-table .song-edit-buttons th {
     border: 1px solid;
+}
+
+#song-table tbody tr:not(.playing):hover {
+    background-color: #F2F2F2;
 }
 
 th.song-number, td.song-number {
     width: 10%;
+    text-align: center;
 }
 
 th.song-title, td.song-title {
     width: 50%;
 }
 
-th.song-title, td.song-artist {
+th.song-artist, td.song-artist {
     width: 40%;
 }
 
 .song-edit-buttons > button {
-
     display: inline;
 }
 
@@ -199,6 +203,7 @@ td {
 #playlist-select .selected {
     border-top: 1px solid;
     border-bottom: 1px solid;
+    background-color: lightgray;
 }
 
 #playlist-select .selected::after {
@@ -206,4 +211,8 @@ td {
     height: inherit;
     width: 500px;
     margin-rigth: 500px;
+}
+
+#song-table tr.playing {
+    background-color: lightgray;
 }

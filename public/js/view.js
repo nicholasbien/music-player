@@ -22,7 +22,7 @@
 		tr.onclick = function() { callback(this); };
 		var td = create('td');
 		td.innerHTML = id + 1;
-		td.class = 'song-number';
+		td.className = 'song-number';
 		tr.appendChild(td);
 		td = create('td');
 		td.innerHTML = title;
@@ -92,6 +92,14 @@
     	} else {
     		$('#current-song').innerHTML = song.artist + ' - ' + song.title;
     	}
+    }
+
+    View.highlightCurrentSong = function(index) {
+    	var previous = $('#song-table tbody > .playing');
+		if (previous) {
+			previous.className = '';
+		}
+    	$('tr' + '#\\3' + index + ' ').className = 'playing';
     }
 
 	window.View = View;
