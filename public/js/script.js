@@ -12,21 +12,29 @@
         }
     });
 
-    window.addEventListener('unload', function(event) {
-        Model.saveChanges();
-    });
-
-    audio.addEventListener('ended', function(event) {
-        currentSong = getNextSong();
+    changeSong = function(song) {
+        currentSong = song;
         if (currentSong) {
             audio.src = currentSong.streamUrl;
             audio.play();
         } else {
             audio.src = '';
-            View.setTimes(audio.currentTime, audio.duration);
-            View.setPlayButtonText(audio.paused);
         }
+        View.setTimes(audio.currentTime, audio.duration);
+        View.setPlayButtonText(audio.paused);
         View.displayCurrentSong(currentSong);
+        var index = currentPlaylist.songs.indexOf(currentSong);
+        if (index != -1) {
+            View.highlightCurrentSong(index);
+        }
+    }
+
+    window.addEventListener('unload', function(event) {
+        Model.saveChanges();
+    });
+
+    audio.addEventListener('ended', function(event) {
+        changeSong(getNextSong());
     });
 
     var moveTimeSlider = function() {
@@ -62,19 +70,14 @@
 		$('#songs').innerHTML = '';
         View.displayAllSongs(currentPlaylist, songClick);
         View.selectPlaylist(selected);
+        var index = currentPlaylist.songs.indexOf(currentSong);
+        if (index != -1) {
+            View.highlightCurrentSong(index);
+        }
 	}
 
     songClick = function(tr) {
-        currentSong = currentPlaylist.songs[tr.id];
-        if (currentSong) {
-            audio.src = currentSong.streamUrl;
-            audio.play();
-        } else {
-            audio.src = '';
-            audio.pause();
-        }
-        View.setPlayButtonText(audio.paused);
-        View.displayCurrentSong(currentSong);
+        changeSong(currentPlaylist.songs[tr.id]);
     }
 
 	addSongButtonClick = function() {
@@ -89,18 +92,8 @@
         if (audio.paused || audio.currentTime > 2) {
             audio.currentTime = 0;
         } else {
-            currentSong = getPreviousSong();
-            if (currentSong) {
-                audio.src = currentSong.streamUrl;
-                audio.play();
-            } else {
-                audio.pause();
-                audio.src = '';
-            }
+            changeSong(getPreviousSong());
         }
-        View.setTimes(audio.currentTime, audio.duration);
-        View.setPlayButtonText(audio.paused);
-        View.displayCurrentSong(currentSong);
     }
 
     playButtonClick = function() {
@@ -111,29 +104,15 @@
                 } else {
                     audio.pause();
                 }
-            }
-            if (!currentSong && currentPlaylist.songs.length > 0) {
-                currentSong = currentPlaylist.songs[0];
-                audio.src = currentSong.streamUrl;
-                audio.play();
+                View.setPlayButtonText(audio.paused);
+            } else if (currentPlaylist.songs.length > 0) {
+                changeSong(currentPlaylist.songs[0]);
             }
         }
-        View.setPlayButtonText(audio.paused);
-        View.displayCurrentSong(currentSong);
     }
 
     nextButtonClick = function() {
-        currentSong = getNextSong();
-        if (currentSong) {
-            audio.src = currentSong.streamUrl;
-            audio.play();
-        } else {
-            audio.pause();
-            audio.src = '';
-        }
-        View.setTimes(audio.currentTime, audio.duration);
-        View.setPlayButtonText(audio.paused);
-        View.displayCurrentSong(currentSong);
+        changeSong(getNextSong());
     }
 
     getPreviousSong = function() {
@@ -179,6 +158,7 @@
         var tr = button.parentNode.parentNode;
         currentPlaylist = Model.removeSong(currentPlaylist, parseInt(tr.id, 10));
         View.removeSongFromDisplay(tr);
+        View.displayAllSongs(currentPlaylist, songClick);
     }
 
     volumeChange = function(input) {
@@ -193,8 +173,10 @@
     editPlaylistButtonClick = function() {
         var newName = $('#rename-playlist-box').value;
         if (newName !== '') {
+            var index = Model.getIndexOfPlaylist(currentPlaylist);
             Model.renamePlaylist(currentPlaylist, newName);
             View.displayAllPlaylists(Model.getAllPlaylists());
+            View.selectPlaylist($('#playlist-select').childNodes[index]);
         }
     }
 
