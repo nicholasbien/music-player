@@ -21,10 +21,11 @@
 		</form>
 		<button id="edit-playlist-button">Edit Playlist</button>
 		<form id="edit-playlist-form">
-			<button id="delete-playlist-button">Delete Playlist</button>
+			
 			<input id="rename-playlist-box" placeholder="Rename Playlist">
 			<button id="edit-playlist-submit">Done</button>
 			<button>Cancel</button>
+			<button id="delete-playlist-button">Delete Playlist</button>
 		</form>
 	</div>
 	
@@ -35,6 +36,7 @@
 					<th class="song-number">#</th>
 					<th class="song-title">Song</th>
 					<th class="song-artist">Artist</th>
+					<th class="song-time">Time</th>
 					<th class="song-edit-buttons"></th>
 				</tr>
 			</thead>
@@ -51,17 +53,17 @@
 	</div>
 	<div id="footer">
 		<div class="left">
-			<span id="current-song"></span>
+			<button id="previous-button" class="controls">|&lt;</button>
+			<button id="play-button" class="controls">&gt;</button>
+			<button id="next-button" class="controls">&gt;|</button>
 		</div>
 		<div class="right">
 			<label>&#x2212</label>
 			<input id="volume" type="range" value="100">
 			<label>+</label>
 		</div>
-		<div class="right">
-			<button id="previous-button" class="controls">|&lt;</button>
-			<button id="play-button" class="controls">&gt;</button>
-			<button id="next-button" class="controls">&gt;|</button>
+		<div class="left">
+			<span id="current-song"></span>
 		</div>
 		<div class="right">
 			<label id="elapsedTime">0:00</label>
@@ -72,7 +74,6 @@
 
 	<script src="/js/model.js"></script>
 	<script src="/js/view.js"></script>
-
 	<script src="/js/utils.js"></script>
 	<script src="/js/script.js"></script>
 	<script src="/js/handler.js"></script>
