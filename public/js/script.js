@@ -31,6 +31,7 @@
 
     window.addEventListener('unload', function(event) {
         Model.saveChanges();
+        //localStorage.clear();
     });
 
     audio.addEventListener('ended', function(event) {
@@ -173,10 +174,9 @@
     editPlaylistButtonClick = function() {
         var newName = $('#rename-playlist-box').value;
         if (newName !== '') {
-            var index = Model.getIndexOfPlaylist(currentPlaylist);
             Model.renamePlaylist(currentPlaylist, newName);
             View.displayAllPlaylists(Model.getAllPlaylists());
-            View.selectPlaylist($('#playlist-select').childNodes[index]);
+            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
         }
     }
 
@@ -185,7 +185,9 @@
         View.displayAllPlaylists(Model.getAllPlaylists());
         currentPlaylist = Model.getAllPlaylists()[0] || null;
         View.displayAllSongs(currentPlaylist, songClick);
-        View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+        if (currentPlaylist) {
+            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+        }
     }
 
 })(this, this.document);

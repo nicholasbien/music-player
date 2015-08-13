@@ -34,9 +34,8 @@
 		tr.appendChild(td);
 		td = create('td');
 		td.className = 'song-edit-buttons';
-		if ($('#edit-playlist-button').style.display !== 'none') {
+		if ($('th.song-edit-buttons').style.display == 'none') {
 			td.style.display = 'none';
-			$('th.song-edit-buttons').style.display = 'none';
 		}
 		td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Up</button>' +
 		               '<button onclick="moveDownButtonClick(event, this)">Down</button>' +

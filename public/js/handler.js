@@ -1,5 +1,12 @@
 (function(window, document) {
 
+    hide('#new-playlist-form');
+    //hide('#edit-playlist-button');
+    hide('#edit-playlist-form');
+    hide('#new-song-button');
+    hide('#new-song-form');
+    hide('th.song-edit-buttons');
+
     $('#playlist-select').addEventListener('click', function() {
         if (event.target) {
             playlistSelect(event.target);
@@ -12,7 +19,6 @@
         hide('#edit-playlist-button');
     });
 
-    $('#new-playlist-form').style.display = 'none';
     $('#new-playlist-form').addEventListener('submit', function(event) {
         event.preventDefault();
         $('#new-playlist-form').reset();
@@ -30,7 +36,6 @@
         show('.song-edit-buttons');
     });
 
-    $('#edit-playlist-form').style.display = 'none';
     $('#edit-playlist-form').addEventListener('submit', function(event) {
         event.preventDefault();
         $('#edit-playlist-form').reset();
@@ -66,13 +71,11 @@
     $('#play-button').addEventListener('click', playButtonClick);
     $('#next-button').addEventListener('click', nextButtonClick);
 
-    $('#new-song-button').style.display = 'none';
     $('#new-song-button').addEventListener('click', function() {
         show('#new-song-form');
         hide('#new-song-button');
     });
 
-    $('#new-song-form').style.display = 'none';
     $('#new-song-form').addEventListener('submit', function() {
         event.preventDefault();
         $('#new-song-form').reset();
