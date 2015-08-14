@@ -1,13 +1,18 @@
 html, body {
     width: 100%;
     height: 100%;
+}
+
+body {
     margin: 0;
-	font-family: sans-serif;
+    font-family: sans-serif;
     font-size: 13px;
 }
 
 body * {
+    box-sizing: border-box;
     outline: none;
+    font-family: inherit;
 }
 
 button {
@@ -16,178 +21,27 @@ button {
     cursor: pointer;
 }
 
+button:active {
+    color: gray;
+}
+
 input[type="range"] {
     cursor: pointer;
 }
 
-body * {
-    box-sizing: border-box;
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 1px;
+    background-color: gray;
+    outline: none;
 }
 
-select {
-    min-width: 80px;
-}
-
-.controls {
-    width: 30px;
-    height: 30px;
-}
-
-#mute-button {
-    height: 30px;
-}
-
-#song-table {
-    width: 100%;
-    margin-bottom: 15px;
-    border-right: 1px solid gray;
-}
-
-#song-table th {
-    text-transform: uppercase;
-}
-
-#song-table td {
-    height: 30px;
-}
-
-#song-table, th, td {
-    font-weight: normal;
-    border-collapse: collapse;
-}
-
-#song-table tbody tr {
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
-}
-
-#song-table th {
-    border-right: 1px solid gray;
-}
-
-#song-table th:not(.song-edit-buttons) {
-    border-bottom: 1px solid gray;
-}
-
-#song-table th, #song-table td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 0;
-}
-
-#song-table .song-edit-buttons {
-    max-width: 100%;
-    
-}
-
-#song-table .song-edit-buttons th {
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 10px;
     border: 1px solid gray;
-}
-
-#song-table tbody tr:not(.playing):hover {
-    background-color: #F2F2F2;
-}
-
-th.song-number, td.song-number {
-    width: 10%;
-    text-align: center;
-}
-
-th.song-title, td.song-title {
-    width: 40%;
-}
-
-th.song-artist, td.song-artist {
-    width: 35%;
-}
-
-th.song-time, td.song-time {
-    width: 15%;
-}
-
-.song-edit-buttons > button {
-    display: inline;
-}
-
-tr {
-    width: 100%;
-}
-
-td {
-    padding: 5px;
-    cursor: pointer;
-}
-
-#new-song-form input {
-    display: block;
-    margin-bottom: 15px;
-}
-
-#footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    white-space: nowrap;
-    border-top: 1px solid gray;
-}
-
-#footer > div {
-    display: block;
-    padding: 0px 5px;
-}
-
-#footer > div > * {
-    display: inline-block;
-    vertical-align: middle;
-    
-}
-
-#footer .left {
-    float: left;
-    max-width: 50%;
-}
-
-#current-song {
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#footer .right {
-    float: right;
-}
-
-#songTime {
-    min-width: 35px;
-}
-
-#left-panel {
-    float: left;
-    width: 160px;
-    height: calc(100% - 80px);
-    border-right: 1px solid gray;
-}
-
-#left-panel > * {
-    display: block;
-}
-
-#right-panel {
-    float: left;
-    width: calc(100% - 160px);
-    height: calc(100% - 80px);
-}
-
-#left-panel, #right-panel {
-    overflow-y: scroll;
-}
-
-#left-panel::-webkit-scrollbar, #right-panel::-webkit-scrollbar {
-    display: none;
+    background-color: white;
 }
 
 #header {
@@ -205,19 +59,37 @@ td {
     vertical-align: middle;
 }
 
-#left-panel *:not(ul):not(li):not(form) {
+#left-panel, #right-panel {
+    float: left;
+    height: calc(100% - 80px);
+    padding-bottom: 15px;
+    overflow-y: scroll;
+}
+
+#left-panel::-webkit-scrollbar, #right-panel::-webkit-scrollbar {
+    display: none;
+}
+
+#left-panel {
+    width: 160px;
+    padding-top: 15px;
+    border-right: 1px solid gray;
+}
+
+#left-panel *:not(#playlist-select):not(li):not(form) {
     margin-top: 15px;
     margin-left: 5px;
 }
 
-#right-panel *:not(#song-table):not(form) {
-    margin-left: 5px;
+#playlists-header {
+    text-transform: uppercase;
+    vertical-align: middle;
 }
 
 #playlist-select {
     list-style-type: none;
-    padding: 0;
     margin: 10px 0 0 0;
+    padding: 0;
 }
 
 #playlist-select > li {
@@ -229,39 +101,136 @@ td {
     cursor: pointer;
 }
 
-#playlists-header {
-    text-transform: uppercase;
-    vertical-align: middle;
-    margin-top: 0;
-}
-
 #playlist-select .selected {
+    background-color: lightgray;
     border-top: 1px solid gray;
     border-bottom: 1px solid gray;
+}
+
+#playlist-select :not(.selected):hover {
+    background-color: #F2F2F2;
+}
+
+#right-panel {
+    width: calc(100% - 160px);
+}
+
+#song-table {
+    width: 100%;
+    margin-bottom: 15px;
+    border-right: 1px solid gray;
+}
+
+#song-table tr {
+    width: 100%;
+}
+
+#song-table tbody tr {
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+#song-table tbody tr.playing {
     background-color: lightgray;
 }
 
-#playlist-select .selected::after {
-    content: "";
-    height: inherit;
-    width: 500px;
-    margin-rigth: 500px;
+#song-table tbody tr:not(.playing):hover {
+    background-color: #F2F2F2;
 }
 
-#song-table tr.playing {
-    background-color: lightgray;
+#song-table, th, td {
+    font-weight: normal;
+    border-collapse: collapse;
 }
 
-input[type="range"] {
-    -webkit-appearance: none;
-    height: 1px;
-    background-color: gray;
-    outline: none;
+#song-table th, #song-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0;
 }
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 10px;
-    border: 1px solid gray;
-    background-color: white;
+
+#song-table th:not(.song-edit-buttons) {
+    text-transform: uppercase;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+#song-table td {
+    height: 30px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#song-table .song-number {
+    width: 10%;
+    text-align: center;
+}
+
+#song-table .song-title {
+    width: 50%;
+}
+
+#song-table .song-artist {
+    width: 40%;
+}
+
+#song-table .song-edit-buttons {
+    max-width: 100%;
+}
+
+.song-edit-buttons > button {
+    display: inline;
+}
+
+#new-song-button, #new-song-form * {
+    margin-left: 5px;
+    margin-top: 15px;
+}
+
+#new-song-form input {
+    display: block;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    white-space: nowrap;
+    border-top: 1px solid gray;
+}
+
+#footer > div {
+    padding: 0 5px;
+}
+
+#footer > div > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#footer .left {
+    float: left;
+}
+
+#footer .right {
+    float: right;
+}
+
+.controls {
+    width: 30px;
+    height: 30px;
+}
+
+#current-song {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#songTime {
+    min-width: 35px;
 }
