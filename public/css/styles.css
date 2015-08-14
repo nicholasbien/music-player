@@ -13,6 +13,11 @@ body * {
 button {
     background-color: transparent;
     border: 1px solid gray;
+    cursor: pointer;
+}
+
+input[type="range"] {
+    cursor: pointer;
 }
 
 body * {
