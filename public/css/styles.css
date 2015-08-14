@@ -6,6 +6,10 @@ html, body {
     font-size: 13px;
 }
 
+body * {
+    outline: none;
+}
+
 button {
     background-color: transparent;
     border: 1px solid gray;
@@ -36,6 +40,10 @@ select {
 
 #song-table th {
     text-transform: uppercase;
+}
+
+#song-table td {
+    height: 30px;
 }
 
 #song-table, th, td {

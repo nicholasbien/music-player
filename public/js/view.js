@@ -17,7 +17,7 @@
 		li.className = 'selected';
 	}
 
-	View.displayNewSong = function(id, title, artist, time, callback) {
+	View.displayNewSong = function(id, title, artist, callback) {
 		var tr = create('tr');
 		tr.id = id;
 		tr.onclick = function() { callback(this); };
@@ -32,10 +32,6 @@
 		td = create('td');
 		td.innerHTML = artist;
 		td.className = 'song-artist';
-		tr.appendChild(td);
-		td = create('td');
-		td.innerHTML = time;
-		td.className = 'song-time';
 		tr.appendChild(td);
 		td = create('td');
 		td.className = 'song-edit-buttons';
