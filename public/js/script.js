@@ -60,10 +60,12 @@
 
 	addPlaylistButtonClick = function() {
 		var name = $('#new-playlist-name').value;
-		currentPlaylist = Model.addNewPlaylist(name);
-		View.displayNewPlaylist(name, currentPlaylist);
-        View.displayAllSongs(currentPlaylist, songClick);
-        View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+        if (name) {
+            currentPlaylist = Model.addNewPlaylist(name);
+            View.displayNewPlaylist(name, currentPlaylist);
+            View.displayAllSongs(currentPlaylist, songClick);
+            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+        }
 	}
 
 	playlistSelect = function(selected) {
@@ -85,8 +87,8 @@
 		var url = $('#new-song-url').value;
 		var title = $('#new-song-title').value;
 		var artist = $('#new-song-artist').value;
-		currentPlaylist = Model.addNewSong(currentPlaylist, url, title, artist);
-		View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
+		Model.addNewSong(currentPlaylist, url, title, artist);
+        View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
 	}
 
     previousButtonClick = function() {

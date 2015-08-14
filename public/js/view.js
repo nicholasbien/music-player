@@ -6,6 +6,7 @@
 		li.innerHTML = name;
 		$('#playlist-select').appendChild(li);
 		show('#new-song-button');
+		show('#edit-playlist-button');
 	}
 
 	View.selectPlaylist = function(li) {
@@ -47,17 +48,21 @@
 	View.displayAllSongs = function(playlist, callback) {
 		$('#songs').innerHTML = '';
 		if (playlist) {
-		    playlist.songs.forEach(function(song, index) {
-	            View.displayNewSong(index, song.title, song.artist, callback);
-	        });
+			if (playlist.songs.length > 0) {
+				playlist.songs.forEach(function(song, index) {
+	            	View.displayNewSong(index, song.title, song.artist, callback);
+	        	});
+			} else {
+				hide('th.song-edit-buttons');
+			}
 		}
     }
 
     View.displayAllPlaylists = function(playlists) {
     	$('#playlist-select').innerHTML = '';
-    	playlists.forEach(function(playlist) {
-    		View.displayNewPlaylist(playlist.name);
-    	});
+		playlists.forEach(function(playlist) {
+			View.displayNewPlaylist(playlist.name);
+		});
     }
 
     View.removeSongFromDisplay = function(tr) {

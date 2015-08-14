@@ -49,7 +49,6 @@
 		var index = playlists.indexOf(playlist);
 		playlists[index].songs.push(song);
 		localStorage.setItem('playlists', JSON.stringify(playlists));
-		return playlists[index];
 	}
 
 	Model.removeSong = function(playlist, songIndex) {
