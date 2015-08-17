@@ -183,6 +183,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .song-edit-buttons > button {
     display: inline;
+    margin: 0 1px;
 }
 
 #new-song-button, #new-song-form * {
