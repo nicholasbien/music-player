@@ -5,6 +5,9 @@
 
 	Model.loadPlaylists = function() {
 		playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+		if (playlists.length === 0) {
+			playlists.push(Model.getSamplePlaylist());
+		}
 		playlists.forEach(function(playlist) {
 			playlist.songs.forEach(function(song) {
 				requestStream(song.url, function(streamUrl) {
@@ -13,6 +16,29 @@
 			});
 		});
 		return playlists[0] || null;
+	}
+
+	Model.getSamplePlaylist = function() {
+		var playlist = {
+			name: 'Sample Playlist',
+			songs: []
+		}
+		playlist.songs = [
+			{
+				url: 'https://soundcloud.com/benkhan/1000bk',
+				title: '1000',
+				artist: 'Ben Khan'
+			}, {
+				url: 'https://soundcloud.com/blackbirdblackbirdsf/all',
+				title: 'All',
+				artist: 'Blackbird Blackbird'
+			}, {
+				url: 'https://soundcloud.com/satinjackets/you-make-me-feel-good',
+				title: 'You Make Me Feel Good',
+				artist: 'Satin Jackets'
+			}
+		];
+		return playlist;
 	}
 
 	Model.getPlaylistByName = function(name) {

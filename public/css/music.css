@@ -37,6 +37,10 @@ input[type="range"]::-webkit-slider-thumb {
     overflow: hidden;
 }
 
+#header div > *:not(#header-title):not(#home) {
+    padding: 0 10px;
+}
+
 #header {
     border-bottom: 1px solid gray;
 }
