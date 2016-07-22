@@ -1,8 +1,0 @@
-Current Issues:
-
-Long load time on first play after refresh. (Possible fix: storing a separate <audio> element within each song that preloads the file from sourceUrl).
-Volume slider doesn't change until mouse move after mouse click.
-
-Additional features:
-Library that stores all songs.
-Replay/shuffle/queue.
