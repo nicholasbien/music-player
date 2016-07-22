@@ -2,7 +2,15 @@
 
 let express  = require('express')
 let mongoose = require('mongoose')
+let uuid     = require('node-uuid')
+let _        = require('lodash')
 let exec     = require('child_process').exec;
+let Playlist = require('./models/playlist.js')
+let Song     = require('./models/song.js')
+let User     = require('./models/user.js')
+
+require('./connect')()
+mongoose.Promise = require('bluebird')
 
 let app = express()
 app.use(express.static(__dirname + '/public'))
@@ -13,7 +21,7 @@ app.get('/', (req, res) => {
 
 app.get('/search', (req, res) => {
   var cmd = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings ' + req.query.url
-  exec(cmd, function(error, stdout, stderr) {
+  exec(cmd, (error, stdout, stderr) => {
     if (stderr) {
       res.status(400).json(stderr)
     } else {

@@ -1,0 +1,8 @@
+{
+  "port": 7070,
+  "db": {
+    "host": "localhost:27017",
+    "protocol": "mongodb",
+    "pathname": "music"
+  }
+}
