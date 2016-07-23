@@ -1,20 +1,24 @@
 (function(window, document) {
 	var View = {};
 
-	View.displayNewPlaylist = function(name) {
+	View.displayNewPlaylist = function(id, name) {
 		var li = create('li');
+        li.id = id;
 		li.innerHTML = name;
 		$('#playlist-select').appendChild(li);
 		show('#new-song-button');
 		show('#edit-playlist-button');
 	}
 
-	View.selectPlaylist = function(li) {
+	View.selectPlaylist = function(id) {
 		var previous = $('#playlist-select > .selected');
 		if (previous) {
 			previous.className = '';
 		}
-		li.className = 'selected';
+        var current = document.getElementById(id);
+        if (current) {
+            current.className = 'selected';
+        }
 	}
 
 	View.displayNewSong = function(id, title, artist, callback) {
@@ -62,7 +66,7 @@
     	$('#playlist-select').innerHTML = '';
         if (playlists) {
             playlists.forEach(function(playlist) {
-                View.displayNewPlaylist(playlist.name);
+                View.displayNewPlaylist(playlist._id, playlist.name);
             });
         }
 		

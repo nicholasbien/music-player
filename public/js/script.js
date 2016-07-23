@@ -32,7 +32,6 @@
     }
 
     window.addEventListener('unload', function(event) {
-        // Model.saveChanges();
         localStorage.clear();
     });
 
@@ -71,11 +70,11 @@
             request('POST', '/user/' + currentUser._id + '/playlist', playlist, (playlist) => {
                 console.log(playlist)
                 currentPlaylist = playlist
-                Model.addNewPlaylist(playlist);
-                View.displayNewPlaylist(name, currentPlaylist);
+                // Model.addNewPlaylist(playlist);
+                View.displayNewPlaylist(playlist._id, name);
                 View.displayAllSongs(currentPlaylist, songClick);
                 console.log(currentPlaylist)
-                View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+                View.selectPlaylist(playlist._id);
             })
         }
 	}
@@ -106,8 +105,8 @@
         }
         request('POST', '/playlist/' + currentPlaylist._id + '/song', song, (song) => {
             console.log(song)
-            Model.addNewSong(currentPlaylist, url, title, artist);
-            View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
+            // Model.addNewSong(currentPlaylist, url, title, artist);
+            View.displayNewSong(song._id, title, artist, songClick);
         })
 	}
 
@@ -163,25 +162,25 @@
     }
 
     moveUpButtonClick = function(event, button) {
-        event.stopPropagation();
-        var tr = button.parentNode.parentNode;
-        currentPlaylist = Model.moveSongUp(currentPlaylist, parseInt(tr.id, 10));
-        View.displayAllSongs(currentPlaylist, songClick);
+    //     event.stopPropagation();
+    //     var tr = button.parentNode.parentNode;
+    //     currentPlaylist = Model.moveSongUp(currentPlaylist, parseInt(tr.id, 10));
+    //     View.displayAllSongs(currentPlaylist, songClick);
     }
 
     moveDownButtonClick = function(event, button) {
-        event.stopPropagation();
-        var tr = button.parentNode.parentNode;
-        currentPlaylist = Model.moveSongDown(currentPlaylist, parseInt(tr.id, 10));
-        View.displayAllSongs(currentPlaylist, songClick);
+    //     event.stopPropagation();
+    //     var tr = button.parentNode.parentNode;
+    //     currentPlaylist = Model.moveSongDown(currentPlaylist, parseInt(tr.id, 10));
+    //     View.displayAllSongs(currentPlaylist, songClick);
     }
 
     removeSongButtonClick = function(event, button) {
-        event.stopPropagation();
-        var tr = button.parentNode.parentNode;
-        currentPlaylist = Model.removeSong(currentPlaylist, parseInt(tr.id, 10));
-        View.removeSongFromDisplay(tr);
-        View.displayAllSongs(currentPlaylist, songClick);
+    //     event.stopPropagation();
+    //     var tr = button.parentNode.parentNode;
+    //     currentPlaylist = Model.removeSong(currentPlaylist, parseInt(tr.id, 10));
+    //     View.removeSongFromDisplay(tr);
+    //     View.displayAllSongs(currentPlaylist, songClick);
     }
 
     volumeChange = function(input) {
@@ -194,22 +193,22 @@
     }
 
     editPlaylistButtonClick = function() {
-        var newName = $('#rename-playlist-box').value;
-        if (newName !== '') {
-            Model.renamePlaylist(currentPlaylist, newName);
-            View.displayAllPlaylists(Model.getAllPlaylists());
-            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-        }
+    //     var newName = $('#rename-playlist-box').value;
+    //     if (newName !== '') {
+    //         Model.renamePlaylist(currentPlaylist, newName);
+    //         View.displayAllPlaylists(Model.getAllPlaylists());
+    //         View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+    //     }
     }
 
     removePlaylistButtonClick = function() {
-        Model.removePlaylist(currentPlaylist);
-        View.displayAllPlaylists(Model.getAllPlaylists());
-        currentPlaylist = Model.getAllPlaylists()[0] || null;
-        View.displayAllSongs(currentPlaylist, songClick);
-        if (currentPlaylist) {
-            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-        }
+    //     Model.removePlaylist(currentPlaylist);
+    //     View.displayAllPlaylists(Model.getAllPlaylists());
+    //     currentPlaylist = Model.getAllPlaylists()[0] || null;
+    //     View.displayAllSongs(currentPlaylist, songClick);
+    //     if (currentPlaylist) {
+    //         View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+    //     }
     }
 
     registerUser = function() {
@@ -223,10 +222,10 @@
             console.log(user)
             currentUser = user
             let playlists = user.playlists
-            currentPlaylist = Model.loadPlaylists(playlists)
             View.displayAllPlaylists(playlists)
-            if (currentPlaylist) {
-                View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+            if (playlists && playlists.length > 0) {
+                currentPlaylist = playlists[0]
+                View.selectPlaylist(currentPlaylist._id)
             }
             View.displayAllSongs(currentPlaylist, songClick)
         })
