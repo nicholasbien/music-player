@@ -5,6 +5,7 @@ let bodyParser = require('body-parser')
 let mongoose   = require('mongoose')
 let uuid       = require('node-uuid')
 let _          = require('lodash')
+let async      = require('async')
 let exec       = require('child_process').exec
 
 let Playlist   = require('./models/playlist.js')
@@ -44,7 +45,14 @@ app.get('/user/:id', (req, res) => {
 app.get('/playlist/:id', (req, res) => {
   let id = req.params.id
   Playlist.findOne({_id: id}, (err, playlist) => {
-    res.status(200).json(playlist)
+    async.forEachOf(playlist.songs, (id, index, callback) => {
+      Song.findOne({_id: id}, (err, song) => {
+        playlist.songs[index] = song
+        callback(err)
+      }, (err) => {
+        res.status(200).json(playlist)
+      })
+    })
   })
 })
 
@@ -57,11 +65,19 @@ app.get('/song/:id', (req, res) => {
 
 app.post('/user', (req, res) => {
   let user = req.body
-  User.findOne({username: user.username}, (err, user) => {
-    if (user !== null) {
-      console.log('username taken')
-      res.status(200).json(user)
+  User.findOne({username: user.username}, (err, existingUser) => {
+    if (existingUser !== null) {
+      console.log('user already registered')
+      async.forEachOf(existingUser.playlists, (id, index, callback) => {
+        Playlist.findOne({_id: id}, (err, playlist) => {
+          existingUser.playlists[index] = playlist
+          callback(err)
+        })
+      }, (err) => {
+        res.status(200).json(existingUser)
+      })
     } else {
+      user._id = uuid.v1()
       User.create(user, (err, user) => {
         res.status(200).json(user)
       })
@@ -69,18 +85,36 @@ app.post('/user', (req, res) => {
   })
 })
 
-app.post('/playlist', (req, res) => {
+app.post('/user/:id/playlist', (req, res) => {
+  let id = req.params.id
   let playlist = req.body
+  playlist._id = uuid.v1()
+  console.log(playlist)
   Playlist.create(playlist, (err, playlist) => {
-    res.status(200).json(playlist)
+    if (err) console.log(err)
+    User.findOneAndUpdate(
+      {_id: id},
+      {$push: {playlists: playlist._id}},
+      (err, user) => {
+        if (err) console.log(err)
+        res.status(200).json(playlist)
+    })
   })
 })
 
-app.post('/song', (req, res) => {
+app.post('/playlist/:id/song', (req, res) => {
+  let id = req.params.id
   let song = req.body
+  song._id = uuid.v1()
   Song.create(song, (err, song) => {
     if (err) console.log(err)
-    res.status(200).json(song)
+    Playlist.findOneAndUpdate(
+      {_id: id}, 
+      {$push: {songs: song._id}},
+      (err, playlist) => {
+        if (err) console.log(err)
+        res.status(200).json(song)
+    })
   })
 })
 

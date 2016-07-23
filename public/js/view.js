@@ -47,7 +47,7 @@
 
 	View.displayAllSongs = function(playlist, callback) {
 		$('#songs').innerHTML = '';
-		if (playlist) {
+		if (playlist && playlist.songs) {
 			if (playlist.songs.length > 0) {
 				playlist.songs.forEach(function(song, index) {
 	            	View.displayNewSong(index, song.title, song.artist, callback);
@@ -60,9 +60,12 @@
 
     View.displayAllPlaylists = function(playlists) {
     	$('#playlist-select').innerHTML = '';
-		playlists.forEach(function(playlist) {
-			View.displayNewPlaylist(playlist.name);
-		});
+        if (playlists) {
+            playlists.forEach(function(playlist) {
+                View.displayNewPlaylist(playlist.name);
+            });
+        }
+		
     }
 
     View.removeSongFromDisplay = function(tr) {

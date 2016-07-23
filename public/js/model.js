@@ -3,18 +3,8 @@
 
 	var playlists = [];
 
-	Model.loadPlaylists = function() {
-		playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-		if (playlists.length === 0) {
-			playlists.push(Model.getSamplePlaylist());
-		}
-		playlists.forEach(function(playlist) {
-			playlist.songs.forEach(function(song) {
-				requestStream(song.url, function(streamUrl) {
-					song.streamUrl = streamUrl;
-				});
-			});
-		});
+	Model.loadPlaylists = function(databasePlaylists) {
+		playlists = databasePlaylists
 		return playlists[0] || null;
 	}
 
@@ -51,14 +41,16 @@
 	}
 
 	Model.getIndexOfPlaylist = function(playlist) {
+		console.log(playlist)
+		console.log(playlists)
 		return playlists.indexOf(playlist);
 	}
 
-	Model.addNewPlaylist = function(name) {
-		var playlist = {
-			name: name,
-			songs: []
-		}
+	Model.addNewPlaylist = function(playlist) {
+		// var playlist = {
+		// 	name: name,
+		// 	songs: []
+		// }
 		playlists.push(playlist);
 		return playlist;
 	}

@@ -1,15 +1,17 @@
 (function(window, document) {
 	currentPlaylist = null;
 	currentSong = null;
+    currentUser = null;
+
 	var audio = new Audio();
 
     window.addEventListener('load', function(event) {
-        currentPlaylist = Model.loadPlaylists();
-        View.displayAllPlaylists(Model.getAllPlaylists());
-        if (currentPlaylist) {
-            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-            View.displayAllSongs(currentPlaylist, songClick);
-        }
+        // currentPlaylist = Model.loadPlaylists();
+        // View.displayAllPlaylists(Model.getAllPlaylists());
+        // if (currentPlaylist) {
+        //     View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+        //     View.displayAllSongs(currentPlaylist, songClick);
+        // }
     });
 
     changeSong = function(song) {
@@ -30,8 +32,8 @@
     }
 
     window.addEventListener('unload', function(event) {
-        Model.saveChanges();
-        //localStorage.clear();
+        // Model.saveChanges();
+        localStorage.clear();
     });
 
     audio.addEventListener('ended', function(event) {
@@ -61,10 +63,20 @@
 	addPlaylistButtonClick = function() {
 		var name = $('#new-playlist-name').value;
         if (name) {
-            currentPlaylist = Model.addNewPlaylist(name);
-            View.displayNewPlaylist(name, currentPlaylist);
-            View.displayAllSongs(currentPlaylist, songClick);
-            View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+            
+            let playlist = {
+                name: name,
+                songs: []
+            }
+            request('POST', '/user/' + currentUser._id + '/playlist', playlist, (playlist) => {
+                console.log(playlist)
+                currentPlaylist = playlist
+                Model.addNewPlaylist(playlist);
+                View.displayNewPlaylist(name, currentPlaylist);
+                View.displayAllSongs(currentPlaylist, songClick);
+                console.log(currentPlaylist)
+                View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+            })
         }
 	}
 
@@ -92,11 +104,11 @@
             title: title,
             artist: artist
         }
-		Model.addNewSong(currentPlaylist, url, title, artist);
-        request('POST', '/song', song, (song) => {
+        request('POST', '/playlist/' + currentPlaylist._id + '/song', song, (song) => {
             console.log(song)
+            Model.addNewSong(currentPlaylist, url, title, artist);
+            View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
         })
-        View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
 	}
 
     previousButtonClick = function() {
@@ -209,6 +221,14 @@
         }
         request('POST', '/user', user, (user) => {
             console.log(user)
+            currentUser = user
+            let playlists = user.playlists
+            currentPlaylist = Model.loadPlaylists(playlists)
+            View.displayAllPlaylists(playlists)
+            if (currentPlaylist) {
+                View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+            }
+            View.displayAllSongs(currentPlaylist, songClick)
         })
     }
 
