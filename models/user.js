@@ -3,9 +3,7 @@
 let mongoose = require('mongoose')
 
 let UserSchema = mongoose.Schema({
-  _id: String,
-  email: String,
-  name: String,
+  username: String,
   password: String,
   playlists: [String]
 })

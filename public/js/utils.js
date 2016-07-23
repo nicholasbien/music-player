@@ -41,4 +41,19 @@
 		return document.createElement(tag);
 	}
 
+	request = function(method, url, body, callback) {
+		let xhr = new XMLHttpRequest()
+		xhr.open(method, url)
+		xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+		xhr.onload = (err) => {
+			if (err) console.log(err)
+			callback(xhr.response)
+		}
+		if (body === null) {
+			xhr.send()
+		} else {
+			xhr.send(JSON.stringify(body))
+		}
+	}
+
 })(this, this.document);

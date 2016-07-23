@@ -84,10 +84,18 @@
     }
 
 	addSongButtonClick = function() {
-		var url = $('#new-song-url').value;
-		var title = $('#new-song-title').value;
-		var artist = $('#new-song-artist').value;
+		let url = $('#new-song-url').value
+		let title = $('#new-song-title').value
+		let artist = $('#new-song-artist').value
+        let song = {
+            url: url,
+            title: title,
+            artist: artist
+        }
 		Model.addNewSong(currentPlaylist, url, title, artist);
+        request('POST', '/song', song, (song) => {
+            console.log(song)
+        })
         View.displayNewSong(currentPlaylist.songs.length - 1, title, artist, songClick);
 	}
 
@@ -190,6 +198,18 @@
         if (currentPlaylist) {
             View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
         }
+    }
+
+    registerUser = function() {
+        let username = $('#username').value
+        let password = $('#password').value
+        let user = {
+            username: username,
+            password: password
+        }
+        request('POST', '/user', user, (user) => {
+            console.log(user)
+        })
     }
 
 })(this, this.document);

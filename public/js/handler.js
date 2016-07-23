@@ -93,4 +93,11 @@
 
     $('#new-song-submit').addEventListener('click', addSongButtonClick);
 
+    $('#register-form').addEventListener('submit', function() {
+        event.preventDefault()
+        $('#register-form').reset()
+    })
+
+    $('#register-submit').addEventListener('click', registerUser);
+
 })(this, this.document);
