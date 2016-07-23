@@ -27,7 +27,7 @@
         View.displayCurrentSong(currentSong);
         var index = currentPlaylist.songs.indexOf(currentSong);
         if (index != -1) {
-            View.highlightCurrentSong(index);
+            View.highlightCurrentSong(song._id);
         }
     }
 
@@ -91,7 +91,12 @@
 	}
 
     songClick = function(tr) {
-        changeSong(currentPlaylist.songs[tr.id]);
+        console.log(currentPlaylist.songs)
+        currentPlaylist.songs.forEach((song) => {
+            if (song._id === tr.id) {
+                changeSong(song)
+            }
+        })
     }
 
 	addSongButtonClick = function() {
@@ -105,8 +110,7 @@
         }
         request('POST', '/playlist/' + currentPlaylist._id + '/song', song, (song) => {
             console.log(song)
-            // Model.addNewSong(currentPlaylist, url, title, artist);
-            View.displayNewSong(song._id, title, artist, songClick);
+            View.displayNewSong(song._id, currentPlaylist.songs.length - 1, title, artist, songClick);
         })
 	}
 
@@ -218,7 +222,7 @@
             username: username,
             password: password
         }
-        request('POST', '/user', user, (user) => {
+        request('POST', '/login', user, (user) => {
             console.log(user)
             currentUser = user
             let playlists = user.playlists

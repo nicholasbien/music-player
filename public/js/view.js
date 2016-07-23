@@ -21,12 +21,12 @@
         }
 	}
 
-	View.displayNewSong = function(id, title, artist, callback) {
+	View.displayNewSong = function(id, index, title, artist, callback) {
 		var tr = create('tr');
 		tr.id = id;
 		tr.onclick = function() { callback(this); };
 		var td = create('td');
-		td.innerHTML = id + 1;
+		td.innerHTML = index + 1;
 		td.className = 'song-number';
 		tr.appendChild(td);
 		td = create('td');
@@ -54,7 +54,7 @@
 		if (playlist && playlist.songs) {
 			if (playlist.songs.length > 0) {
 				playlist.songs.forEach(function(song, index) {
-	            	View.displayNewSong(index, song.title, song.artist, callback);
+	            	View.displayNewSong(song._id, index, song.title, song.artist, callback);
 	        	});
 			} else {
 				hide('th.song-edit-buttons');
@@ -105,12 +105,15 @@
     	}
     }
 
-    View.highlightCurrentSong = function(index) {
+    View.highlightCurrentSong = function(id) {
     	var previous = $('#song-table tbody > .playing');
 		if (previous) {
 			previous.className = '';
 		}
-    	$('tr' + '#\\3' + index + ' ').className = 'playing';
+        var current = document.getElementById(id);
+        if (current) {
+            current.className = 'playing';
+        }
     }
 
 	window.View = View;

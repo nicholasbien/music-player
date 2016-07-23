@@ -63,19 +63,53 @@ app.get('/song/:id', (req, res) => {
   })
 })
 
+app.post('/login', (req, res) => {
+  let user = req.body
+  User.findOne({username: user.username, password: user.password}, (err, user) => {
+    if (user === null) {
+      res.status(200).json()
+      return
+    }
+    if (!user.playlists) {
+      res.status(200).json(user)
+    }
+    let playlistsProcessed = 0
+    user.playlists.forEach((id, index) => {
+      Playlist.findOne({_id: id}, (err, playlist) => {
+        async.forEachOf(playlist.songs, (id, index, callback) => {
+          Song.findOne({_id: id}, (err, song) => {
+            console.log(song)
+            let cmd = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings ' + song.url
+            exec(cmd, (error, stdout, stderr) => {
+              if (stderr) {
+                song.streamUrl = null
+              } else {
+                song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+              }
+              console.log(song)
+              playlist.songs[index] = song
+              callback(err)
+            })
+          })
+        }, (err) => {
+          console.log(user)
+          user.playlists[index] = playlist
+          playlistsProcessed++
+          if (playlistsProcessed === user.playlists.length) {
+            res.status(200).json(user)
+          }
+        })
+      })
+    })
+  })
+})
+
 app.post('/user', (req, res) => {
   let user = req.body
   User.findOne({username: user.username}, (err, existingUser) => {
     if (existingUser !== null) {
       console.log('user already registered')
-      async.forEachOf(existingUser.playlists, (id, index, callback) => {
-        Playlist.findOne({_id: id}, (err, playlist) => {
-          existingUser.playlists[index] = playlist
-          callback(err)
-        })
-      }, (err) => {
-        res.status(200).json(existingUser)
-      })
+      
     } else {
       user._id = uuid.v1()
       User.create(user, (err, user) => {
