@@ -216,7 +216,7 @@
     //     }
     }
 
-    registerUser = function() {
+    loginUser = function() {
         let username = $('#username').value
         let password = $('#password').value
         let user = {
@@ -231,6 +231,21 @@
                 currentPlaylist = playlists[0]
                 View.selectPlaylist(currentPlaylist._id)
             }
+            View.displayAllSongs(currentPlaylist, songClick)
+        })
+    }
+
+    registerUser = function() {
+        let username = $('#username').value
+        let password = $('#password').value
+        let user = {
+            username: username,
+            password: password
+        }
+        request('POST', '/user', user, (user) => {
+            currentUser = user
+            currentPlaylist = null
+            View.displayAllPlaylists(null)
             View.displayAllSongs(currentPlaylist, songClick)
         })
     }

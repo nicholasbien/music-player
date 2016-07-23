@@ -105,16 +105,11 @@ app.post('/login', (req, res) => {
 
 app.post('/user', (req, res) => {
   let user = req.body
+  user._id = uuid.v1()
   User.findOne({username: user.username}, (err, existingUser) => {
-    if (existingUser !== null) {
-      console.log('user already registered')
-      
-    } else {
-      user._id = uuid.v1()
-      User.create(user, (err, user) => {
-        res.status(200).json(user)
-      })
-    }
+    User.create(user, (err, user) => {
+      res.status(200).json(user)
+    })
   })
 })
 

@@ -100,4 +100,6 @@
 
     $('#register-submit').addEventListener('click', registerUser);
 
+    $('#login-submit').addEventListener('click', loginUser);
+
 })(this, this.document);
