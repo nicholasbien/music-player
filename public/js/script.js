@@ -68,30 +68,31 @@
                 songs: []
             }
             request('POST', '/user/' + currentUser._id + '/playlist', playlist, (playlist) => {
-                console.log(playlist)
                 currentPlaylist = playlist
                 // Model.addNewPlaylist(playlist);
                 View.displayNewPlaylist(playlist._id, name);
                 View.displayAllSongs(currentPlaylist, songClick);
-                console.log(currentPlaylist)
                 View.selectPlaylist(playlist._id);
             })
         }
 	}
 
 	playlistSelect = function(selected) {
-        currentPlaylist = Model.getPlaylistByName(selected.innerHTML);
-		$('#songs').innerHTML = '';
-        View.displayAllSongs(currentPlaylist, songClick);
-        View.selectPlaylist(selected);
-        var index = currentPlaylist.songs.indexOf(currentSong);
-        if (index != -1) {
-            View.highlightCurrentSong(index);
-        }
+        currentUser.playlists.forEach((playlist) => {
+            if (playlist._id === selected.id) {
+                currentPlaylist = playlist
+                $('#songs').innerHTML = ''
+                View.displayAllSongs(currentPlaylist, songClick)
+                View.selectPlaylist(selected.id)
+                let index = currentPlaylist.songs.indexOf(currentSong)
+                if (index !== -1) {
+                    View.highlightCurrentSong(currentSong._id)
+                }
+            }
+        })
 	}
 
     songClick = function(tr) {
-        console.log(currentPlaylist.songs)
         currentPlaylist.songs.forEach((song) => {
             if (song._id === tr.id) {
                 changeSong(song)
@@ -109,7 +110,7 @@
             artist: artist
         }
         request('POST', '/playlist/' + currentPlaylist._id + '/song', song, (song) => {
-            console.log(song)
+            currentPlaylist.songs.push(song)
             View.displayNewSong(song._id, currentPlaylist.songs.length - 1, title, artist, songClick);
         })
 	}
@@ -223,7 +224,6 @@
             password: password
         }
         request('POST', '/login', user, (user) => {
-            console.log(user)
             currentUser = user
             let playlists = user.playlists
             View.displayAllPlaylists(playlists)

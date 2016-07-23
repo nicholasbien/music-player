@@ -19,12 +19,14 @@ let app = express()
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json())
 
+let COMMAND = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings '
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname, 'public/index.html')
 })
 
 app.get('/search', (req, res) => {
-  var cmd = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings ' + req.query.url
+  var cmd = COMMAND + req.query.url
   exec(cmd, (error, stdout, stderr) => {
     if (stderr) {
       res.status(400).json(stderr)
@@ -78,21 +80,18 @@ app.post('/login', (req, res) => {
       Playlist.findOne({_id: id}, (err, playlist) => {
         async.forEachOf(playlist.songs, (id, index, callback) => {
           Song.findOne({_id: id}, (err, song) => {
-            console.log(song)
-            let cmd = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings ' + song.url
+            let cmd = COMMAND + song.url
             exec(cmd, (error, stdout, stderr) => {
               if (stderr) {
                 song.streamUrl = null
               } else {
                 song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
               }
-              console.log(song)
               playlist.songs[index] = song
               callback(err)
             })
           })
         }, (err) => {
-          console.log(user)
           user.playlists[index] = playlist
           playlistsProcessed++
           if (playlistsProcessed === user.playlists.length) {
@@ -123,7 +122,6 @@ app.post('/user/:id/playlist', (req, res) => {
   let id = req.params.id
   let playlist = req.body
   playlist._id = uuid.v1()
-  console.log(playlist)
   Playlist.create(playlist, (err, playlist) => {
     if (err) console.log(err)
     User.findOneAndUpdate(
@@ -146,8 +144,20 @@ app.post('/playlist/:id/song', (req, res) => {
       {_id: id}, 
       {$push: {songs: song._id}},
       (err, playlist) => {
-        if (err) console.log(err)
-        res.status(200).json(song)
+        if (err) {
+          console.log(err)
+          res.status(400).json()
+          return
+        }
+        let cmd = COMMAND + song.url
+        exec(cmd, (error, stdout, stderr) => {
+          if (stderr) {
+            song.streamUrl = null
+          } else {
+            song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+          }
+          res.status(200).json(song)
+        })
     })
   })
 })
