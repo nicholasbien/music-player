@@ -1,3 +1,5 @@
+'use strict'
+
 let currentPlaylist = null
 let currentSong = null
 let currentUser = null
@@ -17,7 +19,7 @@ window.addEventListener('unload', (event) => {
   localStorage.clear()
 })
 
-changeSong = (song) => {
+let changeSong = (song) => {
   currentSong = song
   if (currentSong) {
     audio.removeAttribute('src')
@@ -49,18 +51,18 @@ let updateTime = () => {
 
 let keepTime = setInterval(moveTimeSlider, 100)
 
-timeChange = (input) => {
+let timeChange = (input) => {
   audio.currentTime = $('#time').value / 100 * audio.duration || 0
   keepTime = setInterval(moveTimeSlider, 100)
   input.removeEventListener('mousemove', updateTime)
 }
 
-mouseDownOnTime = (input) => {
+let mouseDownOnTime = (input) => {
   input.addEventListener('mousemove', updateTime)
   clearInterval(keepTime)
 }
 
-addPlaylistButtonClick = () => {
+let addPlaylistButtonClick = () => {
   let name = $('#new-playlist-name').value
   if (name) {
     let playlist = {
@@ -77,7 +79,7 @@ addPlaylistButtonClick = () => {
   }
 }
 
-playlistSelect = (selected) => {
+let playlistSelect = (selected) => {
   currentUser.playlists.forEach((playlist) => {
     if (playlist._id === selected.id) {
       currentPlaylist = playlist
@@ -92,7 +94,7 @@ playlistSelect = (selected) => {
   })
 }
 
-songClick = (tr) => {
+let songClick = (tr) => {
   currentPlaylist.songs.forEach((song) => {
     if (song._id === tr.id) {
       changeSong(song)
@@ -100,7 +102,7 @@ songClick = (tr) => {
   })
 }
 
-addSongButtonClick = () => {
+let addSongButtonClick = () => {
   let url = $('#new-song-url').value
   let title = $('#new-song-title').value
   let artist = $('#new-song-artist').value
@@ -117,7 +119,7 @@ addSongButtonClick = () => {
   })
 }
 
-previousButtonClick = () => {
+let previousButtonClick = () => {
   if (audio.paused || audio.currentTime > 2) {
     audio.currentTime = 0
   } else {
@@ -125,7 +127,7 @@ previousButtonClick = () => {
   }
 }
 
-playButtonClick = () => {
+let playButtonClick = () => {
   if (currentPlaylist) {
     if (currentSong) {
       if (audio.paused) {
@@ -140,11 +142,11 @@ playButtonClick = () => {
   }
 }
 
-nextButtonClick = () => {
+let nextButtonClick = () => {
   changeSong(getNextSong())
 }
 
-getPreviousSong = () => {
+let getPreviousSong = () => {
   if (!currentPlaylist || !currentSong) {
     return null
   }
@@ -156,7 +158,7 @@ getPreviousSong = () => {
   }
 }
 
-getNextSong = () => {
+let getNextSong = () => {
   if (!currentPlaylist || !currentSong) {
     return null
   }
@@ -168,21 +170,21 @@ getNextSong = () => {
   }
 }
 
-moveUpButtonClick = (event, button) => {
+let moveUpButtonClick = (event, button) => {
 //     event.stopPropagation();
 //     var tr = button.parentNode.parentNode;
 //     currentPlaylist = Model.moveSongUp(currentPlaylist, parseInt(tr.id, 10));
 //     View.displayAllSongs(currentPlaylist, songClick);
 }
 
-moveDownButtonClick = (event, button) => {
+let moveDownButtonClick = (event, button) => {
 //     event.stopPropagation();
 //     var tr = button.parentNode.parentNode;
 //     currentPlaylist = Model.moveSongDown(currentPlaylist, parseInt(tr.id, 10));
 //     View.displayAllSongs(currentPlaylist, songClick);
 }
 
-removeSongButtonClick = (event, button) => {
+let removeSongButtonClick = (event, button) => {
 //     event.stopPropagation();
 //     var tr = button.parentNode.parentNode;
 //     currentPlaylist = Model.removeSong(currentPlaylist, parseInt(tr.id, 10));
@@ -190,16 +192,16 @@ removeSongButtonClick = (event, button) => {
 //     View.displayAllSongs(currentPlaylist, songClick);
 }
 
-volumeChange = (input) => {
+let volumeChange = (input) => {
   audio.volume = parseInt(input.value, 10) / 100.0
 }
 
-muteButtonClick = () => {
+let muteButtonClick = () => {
   audio.volume = 0
   $('#volume').value = 0
 }
 
-editPlaylistButtonClick = () => {
+let editPlaylistButtonClick = () => {
 //     var newName = $('#rename-playlist-box').value;
 //     if (newName !== '') {
 //         Model.renamePlaylist(currentPlaylist, newName);
@@ -208,7 +210,7 @@ editPlaylistButtonClick = () => {
 //     }
 }
 
-removePlaylistButtonClick = () => {
+let removePlaylistButtonClick = () => {
 //     Model.removePlaylist(currentPlaylist);
 //     View.displayAllPlaylists(Model.getAllPlaylists());
 //     currentPlaylist = Model.getAllPlaylists()[0] || null;
@@ -218,7 +220,7 @@ removePlaylistButtonClick = () => {
 //     }
 }
 
-loginUser = () => {
+let loginUser = () => {
   let username = $('#username').value
   let password = $('#password').value
   let user = {
@@ -237,7 +239,7 @@ loginUser = () => {
   })
 }
 
-registerUser = () => {
+let registerUser = () => {
   let username = $('#username').value
   let password = $('#password').value
   let user = {
