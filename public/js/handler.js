@@ -96,7 +96,7 @@
   $('#register-form').addEventListener('submit', function() {
     event.preventDefault()
     $('#register-form').reset()
-  })
+  });
 
   $('#register-submit').addEventListener('click', registerUser);
 
