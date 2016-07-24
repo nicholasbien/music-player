@@ -111,8 +111,8 @@ let addSongButtonClick = () => {
     title: title,
     artist: artist
   }
-  let url = '/playlist/' + viewingPlaylist._id + '/song'
-  request('POST', url, song, (song) => {
+  let requestUrl = '/playlist/' + viewingPlaylist._id + '/song'
+  request('POST', requestUrl, song, (song) => {
     viewingPlaylist.songs.push(song)
     let index = viewingPlaylist.songs.length - 1
     View.displayNewSong(song._id, index, title, artist, songClick)
@@ -184,11 +184,22 @@ let moveDownButtonClick = (event, button) => {
 }
 
 let removeSongButtonClick = (event, button) => {
-//     event.stopPropagation();
-//     var tr = button.parentNode.parentNode;
-//     currentPlaylist = Model.removeSong(currentPlaylist, parseInt(tr.id, 10));
-//     View.removeSongFromDisplay(tr);
-//     View.displayAllSongs(currentPlaylist, songClick);
+  event.stopPropagation()
+  let tr = button.parentNode.parentNode
+  let songId = tr.id
+  let playlistId = viewingPlaylist._id
+  let songs = viewingPlaylist.songs
+  let url = '/playlist/' + playlistId + '/song/' + songId + '/delete'
+  request('POST', url, null, () => {
+    for (let i = 0; i < songs.length; i++) {
+      if (songs[i]._id === songId) {
+        songs.splice(i, 1)
+        break
+      }
+    }
+    View.removeSongFromDisplay(tr)
+    View.displayAllSongs(viewingPlaylist, songClick)
+  })
 }
 
 let volumeChange = (input) => {

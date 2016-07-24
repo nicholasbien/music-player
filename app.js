@@ -80,16 +80,16 @@ app.post('/login', (req, res) => {
       Playlist.findOne({_id: id}, (err, playlist) => {
         async.forEachOf(playlist.songs, (id, index, callback) => {
           Song.findOne({_id: id}, (err, song) => {
-            let cmd = COMMAND + song.url
-            exec(cmd, (error, stdout, stderr) => {
-              if (stderr) {
-                song.streamUrl = null
-              } else {
-                song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-              }
+            // let cmd = COMMAND + song.url
+            // exec(cmd, (error, stdout, stderr) => {
+            //   if (stderr) {
+            //     song.streamUrl = null
+            //   } else {
+            //     song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+            //   }
               playlist.songs[index] = song
               callback(err)
-            })
+            // })
           })
         }, (err) => {
           user.playlists[index] = playlist
@@ -133,28 +133,55 @@ app.post('/playlist/:id/song', (req, res) => {
   let id = req.params.id
   let song = req.body
   song._id = uuid.v1()
-  Song.create(song, (err, song) => {
-    if (err) console.log(err)
-    Playlist.findOneAndUpdate(
-      {_id: id}, 
-      {$push: {songs: song._id}},
-      (err, playlist) => {
+  let cmd = COMMAND + song.url
+  exec(cmd, (error, stdout, stderr) => {
+    if (stderr) {
+      res.status(400).json()
+    } else {
+      song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+      Song.create(song, (err, song) => {
         if (err) {
           console.log(err)
           res.status(400).json()
           return
         }
-        let cmd = COMMAND + song.url
-        exec(cmd, (error, stdout, stderr) => {
-          if (stderr) {
-            song.streamUrl = null
-          } else {
-            song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-          }
-          res.status(200).json(song)
+        Playlist.findOneAndUpdate(
+          {_id: id}, 
+          {$push: {songs: song._id}},
+          (err, playlist) => {
+            if (err) {
+              console.log(err)
+              res.status(400).json()
+              return
+            }
+            res.status(200).json(song)
         })
-    })
+      })
+    }
   })
+})
+
+app.post('/playlist/:playlistId/song/:songId/delete', (req, res) => {
+  let playlistId = req.params.playlistId
+  let songId = req.params.songId
+  Playlist.findOneAndUpdate(
+    {_id: playlistId},
+    {$pull: {songs: songId}},
+    (err, playlist) => {
+      if (err) {
+        console.log(err)
+        res.status(400).json()
+        return
+      }
+      Song.remove({_id: songId}, (err) => {
+        if (err) {
+          console.log(err)
+          res.status(400).json()
+          return
+        }
+        res.status(200).json()
+      })
+    })
 })
 
 app.listen(7070, (err) => {
