@@ -11,15 +11,23 @@ let $ = (selector) => {
   }
 }
 
-let show = (selector) => {
+let show = (selector, inline) => {
   var elements = $(selector)
   if (elements) {
     if (elements instanceof NodeList) {
       for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = 'block'
+        if (inline) {
+          elements[i].style.display = 'inline'
+        } else {
+          elements[i].style.display = 'block'
+        }
       }
     } else {
-      elements.style.display = 'block'
+      if (inline) {
+        elements.style.display = 'inline'
+      } else {
+        elements.style.display = 'block'
+      }
     }
   }
 }

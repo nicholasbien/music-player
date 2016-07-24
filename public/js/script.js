@@ -64,6 +64,7 @@ let mouseDownOnTime = (input) => {
 
 let addPlaylistButtonClick = () => {
   let name = $('#new-playlist-name').value
+  console.log(name)
   if (name) {
     let playlist = {
       name: name,
@@ -221,12 +222,13 @@ let removePlaylistButtonClick = () => {
 }
 
 let loginUser = () => {
-  let username = $('#username').value
-  let password = $('#password').value
+  let username = $('#login-username').value
+  let password = $('#login-password').value
   let user = {
     username: username,
     password: password
   }
+  console.log(user)
   request('POST', '/login', user, (user) => {
     currentUser = user
     let playlists = user.playlists
@@ -240,8 +242,8 @@ let loginUser = () => {
 }
 
 let registerUser = () => {
-  let username = $('#username').value
-  let password = $('#password').value
+  let username = $('#register-username').value
+  let password = $('#register-password').value
   let user = {
     username: username,
     password: password

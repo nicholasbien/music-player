@@ -2,6 +2,8 @@
 
 hide('#new-playlist-form')
 hide('#edit-playlist-button')
+hide('#login-form')
+hide('#register-form')
 hide('#new-song-button')
 hide('#edit-playlist-form')
 hide('#new-song-form')
@@ -82,7 +84,7 @@ $('#new-song-button').addEventListener('click', () => {
   hide('#new-song-button')
 })
 
-$('#new-song-form').addEventListener('submit', () => {
+$('#new-song-form').addEventListener('submit', (event) => {
   event.preventDefault()
   $('#new-song-form').reset()
   hide('#new-song-form')
@@ -96,6 +98,34 @@ $('#register-form').addEventListener('submit', () => {
   $('#register-form').reset()
 })
 
-$('#register-submit').addEventListener('click', registerUser)
+$('#login-button').addEventListener('click', () => {
+  hide('#login-button')
+  hide('#register-button')
+  show('#login-form')
+})
+
+$('#login-form').addEventListener('submit', (event) => {
+  event.preventDefault()
+  $('#login-form').reset()
+  hide('#login-form')
+  show('#login-button', true)
+  show('#register-button', true)
+})
 
 $('#login-submit').addEventListener('click', loginUser)
+
+$('#register-button').addEventListener('click', () => {
+  hide('#login-button')
+  hide('#register-button')
+  show('#register-form')
+})
+
+$('#register-form').addEventListener('submit', () => {
+  event.preventDefault()
+  $('#register-form').reset()
+  hide('#register-form')
+  show('#login-button', true)
+  show('#register-button', true)
+})
+
+$('#register-submit').addEventListener('submit', registerUser)

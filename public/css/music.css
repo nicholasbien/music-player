@@ -1,223 +1,223 @@
 button {
-    background-color: transparent;
-    border: 1px solid gray;
-    cursor: pointer;
+  background-color: transparent;
+  border: 1px solid gray;
+  cursor: pointer;
 }
 
 button:active {
-    color: gray;
+  color: gray;
 }
 
 input[type="range"] {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 input[type="range"] {
-    -webkit-appearance: none;
-    height: 1px;
-    background-color: gray;
-    outline: none;
+  -webkit-appearance: none;
+  height: 1px;
+  background-color: gray;
+  outline: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 10px;
-    border: 1px solid gray;
-    background-color: white;
+  -webkit-appearance: none;
+  height: 20px;
+  width: 10px;
+  border: 1px solid gray;
+  background-color: white;
 }
 
 #header, #footer {
-    float: left;
-    clear: both;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    white-space: nowrap;
-    overflow: hidden;
+  float: left;
+  clear: both;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #header div > *:not(#header-title):not(#home) {
-    padding: 0 10px;
+  padding: 0 10px;
 }
 
 #header {
-    border-bottom: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 
 #footer {
-    position: fixed;
-    bottom: 0;
-    border-top: 1px solid gray;
+  position: fixed;
+  bottom: 0;
+  border-top: 1px solid gray;
 }
 
 #header > div, #footer > div {
-    padding: 0 5px;
+  padding: 0 5px;
 }
 
 #header > div > *, #footer > div > * {
-    display: inline-block;
-    vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .left {
-    float: left;
+  float: left;
 }
 
 .right {
-    float: right;
+  float: right;
 }
 
 #header-title {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 #left-panel, #right-panel {
-    float: left;
-    height: calc(100% - 80px);
-    padding-bottom: 15px;
-    overflow-y: scroll;
+  float: left;
+  height: calc(100% - 80px);
+  padding-bottom: 15px;
+  overflow-y: scroll;
 }
 
 #left-panel::-webkit-scrollbar, #right-panel::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 #left-panel {
-    width: 160px;
-    padding-top: 15px;
-    border-right: 1px solid gray;
+  width: 160px;
+  padding-top: 15px;
+  border-right: 1px solid gray;
 }
 
-#left-panel *:not(#playlist-select):not(li):not(form) {
-    margin-left: 5px;
-    margin-bottom: 15px;
+#left-panel *:not(#playlist-select):not(li):not(form):not(div) {
+  margin-left: 5px;
+  margin-bottom: 15px;
 }
 
 #playlists-header {
-    text-transform: uppercase;
-    margin-bottom: 15px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
 }
 
 #playlist-select {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 #playlist-select > li {
-    margin: 0;
-    padding: 5px;
-    vertical-align: middle;
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-    cursor: pointer;
+  margin: 0;
+  padding: 5px;
+  vertical-align: middle;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
 }
 
 #playlist-select .selected {
-    background-color: lightgray;
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
+  background-color: lightgray;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 
 #playlist-select :not(.selected):hover {
-    background-color: #F2F2F2;
+  background-color: #F2F2F2;
 }
 
 #right-panel {
-    width: calc(100% - 160px);
+  width: calc(100% - 160px);
 }
 
 #song-table {
-    width: 100%;
-    margin-bottom: 15px;
-    border-right: 1px solid gray;
+  width: 100%;
+  margin-bottom: 15px;
+  border-right: 1px solid gray;
 }
 
 #song-table tr {
-    width: 100%;
+  width: 100%;
 }
 
 #song-table tbody tr {
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 
 #song-table tbody tr.playing {
-    background-color: lightgray;
+  background-color: lightgray;
 }
 
 #song-table tbody tr:not(.playing):hover {
-    background-color: #F2F2F2;
+  background-color: #F2F2F2;
 }
 
 #song-table, th, td {
-    font-weight: normal;
-    border-collapse: collapse;
+  font-weight: normal;
+  border-collapse: collapse;
 }
 
 #song-table th, #song-table td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
 }
 
 #song-table th:not(.song-edit-buttons) {
-    text-transform: uppercase;
-    border-right: 1px solid gray;
-    border-bottom: 1px solid gray;
+  text-transform: uppercase;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 
 #song-table td {
-    height: 30px;
-    padding: 5px;
-    cursor: pointer;
+  height: 30px;
+  padding: 5px;
+  cursor: pointer;
 }
 
 #song-table .song-number {
-    width: 10%;
-    text-align: center;
+  width: 10%;
+  text-align: center;
 }
 
 #song-table .song-title {
-    width: 50%;
+  width: 50%;
 }
 
 #song-table .song-artist {
-    width: 40%;
+  width: 40%;
 }
 
 #song-table .song-edit-buttons {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .song-edit-buttons > button {
-    display: inline;
-    margin: 0 1px;
+  display: inline;
+  margin: 0 1px;
 }
 
 #new-song-button, #new-song-form * {
-    margin-left: 5px;
-    margin-top: 15px;
+  margin-left: 5px;
+  margin-top: 15px;
 }
 
 #new-song-form input {
-    display: block;
+  display: block;
 }
 
 .controls {
-    width: 30px;
-    height: 30px;
-    padding: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
 }
 /*
 #current-song {
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 */
 #songTime {
-    min-width: 35px;
+  min-width: 35px;
 }

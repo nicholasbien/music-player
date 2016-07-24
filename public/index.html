@@ -1,98 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Music Player</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/css/site.css">
-	<link rel="stylesheet" href="/css/music.css">
+  <title>Music Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/music.css">
 </head>
 
 <body>
-	<div id="header">
-		<div class="left">
-			<span id="header-title">Music Player</span>
-		</div>
-		<div class="right">
-			<a id="home" href="/">Home</a>
-		</div>
-		<div class="right">
-			<a id="github" href="https://github.com/nicholasbien/music-player">View Source on GitHub</a>
-		</div>
-		<div class="left">
-			<span id="header-description">Play and save your favorite songs from YouTube, SoundCloud, Bandcamp, and more.</span>
-		</div>
-	</div>
-	<div id="left-panel">
-		<span id="playlists-header">Playlists</span>
-		<ul id="playlist-select"></ul>
-		<button id="new-playlist-button">New Playlist</button>
-		<form id="new-playlist-form">
-			<input id="new-playlist-name" placeholder="New Playlist">
-			<button id="new-playlist-submit">Submit</button>
-			<button>Cancel</button>
-		</form>
-		<button id="edit-playlist-button">Edit Playlist</button>
-		<form id="edit-playlist-form">
-			
-			<input id="rename-playlist-box" placeholder="Rename Playlist">
-			<button id="edit-playlist-submit">Done</button>
-			<button>Cancel</button>
-			<button id="delete-playlist-button">Delete Playlist</button>
-		</form>
-		<form id="register-form">
-			<input id="username" placeholder="Username">
-			<input id="password" type="password" placeholder="Password">
-			<button id="login-submit">Login</button>
-			<button id="register-submit">Register</button>
-		</form>
-	</div>
-	
-	<div id="right-panel">
-		<table id="song-table">
-			<thead>
-				<tr>
-					<th class="song-number">#</th>
-					<th class="song-title">Song</th>
-					<th class="song-artist">Artist</th>
-					<th class="song-edit-buttons"></th>
-				</tr>
-			</thead>
-			<tbody id="songs"></tbody>
-		</table>
-		<button id="new-song-button">Add Song</button>
-		<form id="new-song-form">
-			<input id="new-song-url" placeholder="URL">
-			<input id="new-song-title" placeholder="Title">
-			<input id="new-song-artist" placeholder="Artist">
-			<button id="new-song-submit">Submit</button>
-			<button>Cancel</button>
-		</form>
-	</div>
-	<div id="footer">
-		<div class="left">
-			<button id="previous-button" class="controls">|&lt;</button>
-			<button id="play-button" class="controls">&gt;</button>
-			<button id="next-button" class="controls">&gt;|</button>
-		</div>
-		<div class="right">
-			<label>&#x2212</label>
-			<input id="volume" type="range" value="100">
-			<label>+</label>
-		</div>
-		<div class="left">
-			<span id="current-song"></span>
-		</div>
-		<div class="right">
-			<label id="elapsedTime">0:00</label>
-			<input id="time" type="range" value ="0">
-			<label id="songTime">-:--</label>
-		</div>
-	</div>
+  <div id="header">
+    <div class="left">
+      <span id="header-title">Music Player</span>
+    </div>
+    <div class="right">
+      <a id="home" href="/">Home</a>
+    </div>
+    <div class="right">
+      <a id="github" href="https://github.com/nicholasbien/music-player">View Source on GitHub</a>
+    </div>
+    <div class="left">
+      <span id="header-description">Play and save your favorite songs from YouTube, SoundCloud, Bandcamp, and more.</span>
+    </div>
+  </div>
+  <div id="left-panel">
+    <span id="playlists-header">Playlists</span>
+    <ul id="playlist-select"></ul>
+    <button id="new-playlist-button">New Playlist</button>
+    <form id="new-playlist-form">
+      <input id="new-playlist-name" placeholder="New Playlist">
+      <button id="new-playlist-submit">Submit</button>
+      <button>Cancel</button>
+    </form>
+    <button id="edit-playlist-button">Edit Playlist</button>
+    <form id="edit-playlist-form">
+      
+      <input id="rename-playlist-box" placeholder="Rename Playlist">
+      <button id="edit-playlist-submit">Done</button>
+      <button>Cancel</button>
+      <button id="delete-playlist-button">Delete Playlist</button>
+    </form>
+    <div>
+      <button id="login-button">Login</button>
+      <button id="register-button">Register</button>
+      <form id="login-form">
+        <input id="login-username" placeholder="Username">
+        <input id="login-password" type="password" placeholder="Password">
+        <button id="login-submit">Submit</button>
+        <button>Cancel</button>
+      </form>
+      <form id="register-form">
+        <input id="register-username" placeholder="Username">
+        <input id="register-password" type="password" placeholder="Password">
+        <button id="register-submit">Submit</button>
+        <button>Cancel</button>
+      </form>
+    </div>
 
-	<script src="/js/view.js"></script>
-	<script src="/js/util.js"></script>
-	<script src="/js/script.js"></script>
-	<script src="/js/handler.js"></script>
+  </div>
+  
+  <div id="right-panel">
+    <table id="song-table">
+      <thead>
+        <tr>
+          <th class="song-number">#</th>
+          <th class="song-title">Song</th>
+          <th class="song-artist">Artist</th>
+          <th class="song-edit-buttons"></th>
+        </tr>
+      </thead>
+      <tbody id="songs"></tbody>
+    </table>
+    <button id="new-song-button">Add Song</button>
+    <form id="new-song-form">
+      <input id="new-song-url" placeholder="URL">
+      <input id="new-song-title" placeholder="Title">
+      <input id="new-song-artist" placeholder="Artist">
+      <button id="new-song-submit">Submit</button>
+      <button>Cancel</button>
+    </form>
+  </div>
+  <div id="footer">
+    <div class="left">
+      <button id="previous-button" class="controls">|&lt;</button>
+      <button id="play-button" class="controls">&gt;</button>
+      <button id="next-button" class="controls">&gt;|</button>
+    </div>
+    <div class="right">
+      <label>&#x2212</label>
+      <input id="volume" type="range" value="100">
+      <label>+</label>
+    </div>
+    <div class="left">
+      <span id="current-song"></span>
+    </div>
+    <div class="right">
+      <label id="elapsedTime">0:00</label>
+      <input id="time" type="range" value ="0">
+      <label id="songTime">-:--</label>
+    </div>
+  </div>
+
+  <script src="/js/view.js"></script>
+  <script src="/js/util.js"></script>
+  <script src="/js/script.js"></script>
+  <script src="/js/handler.js"></script>
 
 </body>
 </html>
