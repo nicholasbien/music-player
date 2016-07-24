@@ -1,6 +1,7 @@
 'use strict'
 
 let currentPlaylist = null
+let viewingPlaylist = null
 let currentSong = null
 let currentUser = null
 
@@ -69,9 +70,9 @@ let addPlaylistButtonClick = () => {
     }
     let url = '/user/' + currentUser._id + '/playlist'
     request('POST', url, playlist, (playlist) => {
-      currentPlaylist = playlist
+      viewingPlaylist = playlist
       View.displayNewPlaylist(playlist._id, name)
-      View.displayAllSongs(currentPlaylist, songClick)
+      View.displayAllSongs(viewingPlaylist, songClick)
       View.selectPlaylist(playlist._id)
     })
   }
@@ -80,11 +81,11 @@ let addPlaylistButtonClick = () => {
 let playlistSelect = (selected) => {
   currentUser.playlists.forEach((playlist) => {
     if (playlist._id === selected.id) {
-      currentPlaylist = playlist
+      viewingPlaylist = playlist
       $('#songs').innerHTML = ''
-      View.displayAllSongs(currentPlaylist, songClick)
+      View.displayAllSongs(viewingPlaylist, songClick)
       View.selectPlaylist(selected.id)
-      let index = currentPlaylist.songs.indexOf(currentSong)
+      let index = viewingPlaylist.songs.indexOf(currentSong)
       if (index !== -1) {
         View.highlightCurrentSong(currentSong._id)
       }
@@ -93,8 +94,9 @@ let playlistSelect = (selected) => {
 }
 
 let songClick = (tr) => {
-  currentPlaylist.songs.forEach((song) => {
+  viewingPlaylist.songs.forEach((song) => {
     if (song._id === tr.id) {
+      currentPlaylist = viewingPlaylist
       changeSong(song)
     }
   })
@@ -109,10 +111,10 @@ let addSongButtonClick = () => {
     title: title,
     artist: artist
   }
-  let url = '/playlist/' + currentPlaylist._id + '/song'
+  let url = '/playlist/' + viewingPlaylist._id + '/song'
   request('POST', url, song, (song) => {
-    currentPlaylist.songs.push(song)
-    let index = currentPlaylist.songs.length - 1
+    viewingPlaylist.songs.push(song)
+    let index = viewingPlaylist.songs.length - 1
     View.displayNewSong(song._id, index, title, artist, songClick)
   })
 }
@@ -126,17 +128,16 @@ let previousButtonClick = () => {
 }
 
 let playButtonClick = () => {
-  if (currentPlaylist) {
-    if (currentSong) {
-      if (audio.paused) {
-        audio.play()
-      } else {
-        audio.pause()
-      }
-      View.setPlayButtonText(audio.paused)
-    } else if (currentPlaylist.songs.length > 0) {
-      changeSong(currentPlaylist.songs[0])
+  if (currentSong) {
+    if (audio.paused) {
+      audio.play()
+    } else {
+      audio.pause()
     }
+    View.setPlayButtonText(audio.paused)
+  } else if (viewingPlaylist.songs.length > 0) {
+    currentPlaylist = viewingPlaylist
+    changeSong(viewingPlaylist.songs[0])
   }
 }
 
@@ -230,10 +231,10 @@ let loginUser = () => {
     let playlists = user.playlists
     View.displayAllPlaylists(playlists)
     if (playlists && playlists.length > 0) {
-      currentPlaylist = playlists[0]
-      View.selectPlaylist(currentPlaylist._id)
+      viewingPlaylist = playlists[0]
+      View.selectPlaylist(viewingPlaylist._id)
     }
-    View.displayAllSongs(currentPlaylist, songClick)
+    View.displayAllSongs(viewingPlaylist, songClick)
   })
 }
 
@@ -246,8 +247,8 @@ let registerUser = () => {
   }
   request('POST', '/user', user, (user) => {
     currentUser = user
-    currentPlaylist = null
+    viewingPlaylist = null
     View.displayAllPlaylists(null)
-    View.displayAllSongs(currentPlaylist, songClick)
+    View.displayAllSongs(viewingPlaylist, songClick)
   })
 }
