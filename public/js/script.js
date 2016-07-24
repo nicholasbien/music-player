@@ -22,8 +22,6 @@ window.addEventListener('unload', (event) => {
 let changeSong = (song) => {
   currentSong = song
   if (currentSong) {
-    audio.removeAttribute('src')
-    audio.load()
     audio.src = currentSong.streamUrl
     audio.play()
   } else {
@@ -64,7 +62,6 @@ let mouseDownOnTime = (input) => {
 
 let addPlaylistButtonClick = () => {
   let name = $('#new-playlist-name').value
-  console.log(name)
   if (name) {
     let playlist = {
       name: name,
@@ -228,7 +225,6 @@ let loginUser = () => {
     username: username,
     password: password
   }
-  console.log(user)
   request('POST', '/login', user, (user) => {
     currentUser = user
     let playlists = user.playlists
