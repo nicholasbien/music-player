@@ -220,12 +220,17 @@ let muteButtonClick = () => {
 }
 
 let editPlaylistButtonClick = () => {
-//     var newName = $('#rename-playlist-box').value;
-//     if (newName !== '') {
-//         Model.renamePlaylist(currentPlaylist, newName);
-//         View.displayAllPlaylists(Model.getAllPlaylists());
-//         View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-//     }
+  let newName = $('#rename-playlist-box').value
+  if (newName === '') {
+    return
+  }
+  viewingPlaylist.name = newName
+  let playlistId = viewingPlaylist._id
+  let url = '/playlist/' + playlistId + '/rename'
+  request('POST', url, viewingPlaylist, () => {
+    View.displayAllPlaylists(currentUser.playlists)
+    View.selectPlaylist(viewingPlaylist._id)
+  })
 }
 
 let removePlaylistButtonClick = () => {

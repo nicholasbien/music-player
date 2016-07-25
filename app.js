@@ -220,7 +220,26 @@ app.post('/user/:userId/playlist/:playlistId/delete', (req, res) => {
         }
         res.status(200).json()
       })
-    })
+    }
+  )
+})
+
+app.post('/playlist/:id/rename', (req, res) => {
+  let id = req.params.id
+  let playlist = req.body
+  Playlist.findOneAndUpdate(
+    {_id: id},
+    {name: playlist.name},
+    {new: true},
+    (err, playlist) => {
+      if (err) {
+        console.log(err)
+        res.status(400).json()
+        return
+      }
+      res.status(200).json()
+    }
+  )
 })
 
 app.listen(7070, (err) => {
