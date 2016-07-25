@@ -24,7 +24,13 @@ let changeSong = (song) => {
   currentSong = song
   if (currentSong) {
     audio.src = currentSong.streamUrl
-    audio.play()
+    audio.play().catch(() => {
+      request('POST', '/song', song, (song) => {
+        currentSong = song
+        audio.src = currentSong.streamUrl
+        audio.play()
+      })
+    })
   } else {
     audio.src = ''
   }
@@ -113,9 +119,11 @@ let addSongButtonClick = () => {
   }
   let requestUrl = '/playlist/' + viewingPlaylist._id + '/song'
   request('POST', requestUrl, song, (song) => {
-    viewingPlaylist.songs.push(song)
-    let index = viewingPlaylist.songs.length - 1
-    View.displayNewSong(song._id, index, title, artist, songClick)
+    if (song) {
+      viewingPlaylist.songs.push(song)
+      let index = viewingPlaylist.songs.length - 1
+      View.displayNewSong(song._id, index, title, artist, songClick)
+    }
   })
 }
 

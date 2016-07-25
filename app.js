@@ -58,13 +58,6 @@ app.get('/playlist/:id', (req, res) => {
   })
 })
 
-app.get('/song/:id', (req, res) => {
-  let id = req.params.id
-  Song.findOne({_id: id}, (err, song) => {
-    res.status(200).json(song)
-  })
-})
-
 app.post('/login', (req, res) => {
   let user = req.body
   User.findOne({username: user.username, password: user.password}, (err, user) => {
@@ -80,16 +73,8 @@ app.post('/login', (req, res) => {
       Playlist.findOne({_id: id}, (err, playlist) => {
         async.forEachOf(playlist.songs, (id, index, callback) => {
           Song.findOne({_id: id}, (err, song) => {
-            // let cmd = COMMAND + song.url
-            // exec(cmd, (error, stdout, stderr) => {
-            //   if (stderr) {
-            //     song.streamUrl = null
-            //   } else {
-            //     song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-            //   }
-              playlist.songs[index] = song
-              callback(err)
-            // })
+            playlist.songs[index] = song
+            callback(err)
           })
         }, (err) => {
           user.playlists[index] = playlist
@@ -122,10 +107,12 @@ app.post('/user/:id/playlist', (req, res) => {
     User.findOneAndUpdate(
       {_id: id},
       {$push: {playlists: playlist._id}},
+      {new: true},
       (err, user) => {
         if (err) console.log(err)
         res.status(200).json(playlist)
-    })
+      }
+    )
   })
 })
 
@@ -137,27 +124,28 @@ app.post('/playlist/:id/song', (req, res) => {
   exec(cmd, (error, stdout, stderr) => {
     if (stderr) {
       res.status(400).json()
-    } else {
-      song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-      Song.create(song, (err, song) => {
-        if (err) {
-          console.log(err)
-          res.status(400).json()
-          return
-        }
-        Playlist.findOneAndUpdate(
-          {_id: id}, 
-          {$push: {songs: song._id}},
-          (err, playlist) => {
-            if (err) {
-              console.log(err)
-              res.status(400).json()
-              return
-            }
-            res.status(200).json(song)
-        })
-      })
+      return
     }
+    song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+    Song.create(song, (err, song) => {
+      if (err) {
+        console.log(err)
+        res.status(400).json()
+        return
+      }
+      Playlist.findOneAndUpdate(
+        {_id: id}, 
+        {$push: {songs: song._id}},
+        {new: true},
+        (err, playlist) => {
+          if (err) {
+            console.log(err)
+            res.status(400).json()
+            return
+          }
+          res.status(200).json(song)
+      })
+    })
   })
 })
 
@@ -167,6 +155,7 @@ app.post('/playlist/:playlistId/song/:songId/delete', (req, res) => {
   Playlist.findOneAndUpdate(
     {_id: playlistId},
     {$pull: {songs: songId}},
+    {new: true},
     (err, playlist) => {
       if (err) {
         console.log(err)
@@ -181,7 +170,33 @@ app.post('/playlist/:playlistId/song/:songId/delete', (req, res) => {
         }
         res.status(200).json()
       })
-    })
+    }
+  )
+})
+
+app.post('/song', (req, res) => {
+  let song = req.body
+  let cmd = COMMAND + song.url
+  exec(cmd, (error, stdout, stderr) => {
+    if (stderr) {
+      res.status(400).json()
+      return
+    }
+    let streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+    Song.findOneAndUpdate(
+      {_id: song._id},
+      {streamUrl: streamUrl},
+      {new: true},
+      (err, song) => {
+        if (err) {
+          console.log(err)
+          res.status(400).json()
+          return
+        }
+        res.status(200).json(song)
+      }
+    )
+  })
 })
 
 app.listen(7070, (err) => {
