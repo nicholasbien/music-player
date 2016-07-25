@@ -12,31 +12,36 @@ function DiscJockey() {
     tracklist.push(tracks[song._id])
   }
 
-  this.setTracklist = (songs) => {
+  this.setTracklist = (playlist) => {
     tracklist = []
-    songs.forEach((song) => {
+    playlist.songs.forEach((song) => {
       this.addToTracklist(song)
     })
+    tracklist.playlist = playlist
   }
 
-  this.preloadTrack = (song) => {
+  this.preloadTrack = (song, errorCallback) => {
     if (tracks[song._id] && tracks[song._id].src === song.streamUrl) {
       return
     }
     tracks[song._id] = new Audio()
-    tracks[song._id].src = song.streamUrl
+    tracks[song._id].innerHTML = '<source  src="' + song.streamUrl + '"/>'
+    tracks[song._id].firstChild.addEventListener('error', function(e) {
+      errorCallback(song)
+    })
+    tracks[song._id].song = song
     tracks[song._id].addEventListener('ended', () => {
       this.startNextTrack()
     })
   }
 
-  this.preloadTracks = (songs) => {
+  this.preloadTracks = (songs, errorCallback) => {
     songs.forEach((song) => {
-      this.preloadTrack(song)
+      this.preloadTrack(song, errorCallback)
     })
   }
 
-  this.play = () => {
+  this.play = (callback) => {
     currentTrack.play()
   }
 
@@ -44,14 +49,12 @@ function DiscJockey() {
     currentTrack.pause()
   }
 
-
-
   this.startTrack = (index) => {
     if (currentTrack) {
       resetCurrentTrack()
     }
     currentTrack = tracklist[index]
-    currentTrack.play()
+    this.play()
   }
 
   this.startPreviousTrack = () => {
@@ -104,5 +107,13 @@ function DiscJockey() {
 
   this.setVolume = (volume) => {
     currentTrack.volume = volume
+  }
+
+  this.getCurrentSong = () => {
+    return currentTrack.song
+  }
+
+  this.getCurrentPlaylist = () => {
+    return tracklist.playlist
   }
 }

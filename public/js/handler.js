@@ -27,8 +27,10 @@ $('#new-playlist-form').addEventListener('submit', (event) => {
   hide('#new-playlist-form')
   if ($('.selected')) {
     show('#edit-playlist-button')
+    show('#new-song-button')
   }
   show('#new-playlist-button')
+
 })
 
 $('#new-playlist-submit').addEventListener('click', addPlaylistButtonClick)
@@ -112,7 +114,7 @@ $('#login-form').addEventListener('submit', (event) => {
   show('#register-button', true)
 })
 
-$('#login-submit').addEventListener('click', loginUser)
+$('#login-submit').addEventListener('click', loginUserButtonClick)
 
 $('#register-button').addEventListener('click', () => {
   hide('#login-button')
@@ -128,4 +130,4 @@ $('#register-form').addEventListener('submit', () => {
   show('#register-button', true)
 })
 
-$('#register-submit').addEventListener('submit', registerUser)
+$('#register-submit').addEventListener('submit', registerUserButtonClick)
