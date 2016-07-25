@@ -110,10 +110,13 @@
       } else {
         dj.pause()
       }
-    } else if (viewingPlaylist.songs.length > 0) {
-      dj.setTracklist(viewingPlaylist)
-      dj.startTrack(0)
-      view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+    } else {
+      let visiblePlaylist = view.getCurrentPlaylist()
+      if (visiblePlaylist && visiblePlaylist.songs.length > 0) {
+        dj.setTracklist(visiblePlaylist)
+        dj.startTrack(0)
+        view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+      }
     }
   }
 

@@ -42,9 +42,6 @@ function View() {
   this.startSong = (song, playlist) => {
     this.setTimes(null)
     displayCurrentSong(song)
-    if (currentPlaylist === playlist) {
-      highlightCurrentSong(song._id)
-    }
   }
 
   this.getIndexOfSong = (tr) => {

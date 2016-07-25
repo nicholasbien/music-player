@@ -110,7 +110,11 @@ function DiscJockey() {
   }
 
   this.getCurrentSong = () => {
-    return currentTrack.song
+    if (currentTrack) {
+      return currentTrack.song
+    } else {
+      return null
+    }
   }
 
   this.getCurrentPlaylist = () => {
