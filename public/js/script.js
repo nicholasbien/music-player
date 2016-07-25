@@ -49,24 +49,20 @@
       }
       let url = '/user/' + currentUser._id + '/playlist'
       request('POST', url, playlist, (playlist) => {
-        view.setPlaylist(playlist, songClick)
+        view.addPlaylist(playlist)
+        view.setPlaylist(playlist._id, songClick)
       })
     }
   }
 
   window.playlistSelect = (selected) => {
-    currentUser.playlists.forEach((playlist) => {
-      if (playlist._id === selected.id) {
-        $('#songs').innerHTML = ''
-        view.setPlaylist(playlist, songClick)
-        dj.preloadTracks(playlist.songs, reprocessSong)
-      }
-    })
+    view.setPlaylist(selected.id, songClick)
+    dj.preloadTracks(view.getCurrentPlaylist().songs, reprocessSong)
   }
 
-  window.songClick = (tr) => {
-    let index = view.getIndexOfSong(tr)
+  window.songClick = (clicked) => {
     dj.setTracklist(view.getCurrentPlaylist())
+    let index = view.getIndexOfSong(clicked)
     dj.startTrack(index)
     view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
   }
@@ -85,6 +81,7 @@
     request('POST', requestUrl, song, (song) => {
       if (song) {
         view.addSong(song, songClick)
+        dj.preloadTrack(song)
         dj.addToTracklist(song)
       }
     })
@@ -205,7 +202,7 @@
       let playlists = user.playlists
       view.addPlaylists(playlists)
       if (playlists && playlists.length > 0) {
-        view.setPlaylist(playlists[0], songClick)
+        view.setPlaylist(playlists[0]._id, songClick)
         dj.preloadTracks(playlists[0].songs, reprocessSong)
       }
     })

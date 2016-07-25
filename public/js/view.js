@@ -1,7 +1,16 @@
 'use strict'
 
 function View() {
+  let playlists = []
   let currentPlaylist = null
+
+  let clearPlaylists = () => {
+    $('#playlist-select').innerHTML = ''
+  }
+
+  let clearSongs = () => {
+    $('#songs').innerHTML = ''
+  }
 
   let highlightCurrentSong = (id) => {
     let previous = $('#song-table tbody > .playing')
@@ -22,21 +31,25 @@ function View() {
     }
   }
 
-  this.setPlaylist = (playlist, callback) => {
-    currentPlaylist = playlist
-    this.selectPlaylist(playlist._id)
-    addSongs(playlist.songs, callback)
-  }
-
-  let addSongs = (songs, callback) => {
-    $('#songs').innerHTML = ''
+  let displaySongs = (songs, callback) => {
     if (songs.length > 0) {
       songs.forEach((song, index) => {
-        this.addSong(song, callback)
+        displaySong(song, callback)
       })
     } else {
       hide('th.song-edit-buttons')
     }
+  }
+
+  this.setPlaylist = (id, callback) => {
+    clearSongs()
+    playlists.forEach((playlist) => {
+      if (playlist._id === id) {
+        currentPlaylist = playlist
+      }
+    })
+    selectPlaylist(currentPlaylist._id)
+    displaySongs(currentPlaylist.songs, callback)
   }
 
   this.startSong = (song, playlist) => {
@@ -55,6 +68,7 @@ function View() {
   }
 
   this.addPlaylist = (playlist) => {
+    playlists.push(playlist)
     let li = create('li')
     li.id = playlist._id
     li.innerHTML = playlist.name
@@ -63,7 +77,13 @@ function View() {
     show('#edit-playlist-button')
   }
 
-  this.selectPlaylist = (id) => {
+  this.addPlaylists = (playlists) => {
+    playlists.forEach((playlist) => {
+      this.addPlaylist(playlist)
+    })
+  }
+
+  let selectPlaylist = (id) => {
     let previous = $('#playlist-select > .selected')
     if (previous) {
       previous.className = ''
@@ -75,11 +95,16 @@ function View() {
   }
 
   this.addSong = (song, callback) => {
+    currentPlaylist.songs.push(song)
+    displaySong(song, callback)
+  }
+
+  let displaySong = (song, callback) => {
     let tr = create('tr')
     tr.id = song._id
+    let index = $('#songs').childNodes.length
     tr.onclick = () => { callback(tr) }
     let td = create('td')
-    let index = $('#songs').childNodes.length
     td.innerHTML = index + 1
     td.className = 'song-number'
     tr.appendChild(td)
@@ -101,16 +126,6 @@ function View() {
              '<button onclick="removeSongButtonClick(event, this)">Delete</button>'
     tr.appendChild(td)
     $('#songs').appendChild(tr)
-  }
-
-  this.addPlaylists = (playlists) => {
-    $('#playlist-select').innerHTML = ''
-    if (playlists) {
-      playlists.forEach((playlist) => {
-        this.addPlaylist(playlist)
-      })
-    }
-    
   }
 
   this.removeSongFromPlaylist = (tr) => {
