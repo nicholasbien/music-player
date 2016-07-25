@@ -1,6 +1,6 @@
 'use strict'
 
-let $ = (selector) => {
+let $$ = (selector) => {
   let results = document.querySelectorAll(selector)
   if (results.length === 0) {
     return null
@@ -12,7 +12,7 @@ let $ = (selector) => {
 }
 
 let show = (selector, inline) => {
-  var elements = $(selector)
+  var elements = $$(selector)
   if (elements) {
     if (elements instanceof NodeList) {
       for (var i = 0; i < elements.length; i++) {
@@ -33,7 +33,7 @@ let show = (selector, inline) => {
 }
 
 let hide = (selector) => {
-  var elements = $(selector)
+  var elements = $$(selector)
   if (elements) {
     if (elements instanceof NodeList) {
       for (var i = 0; i < elements.length; i++) {

@@ -1,12 +1,22 @@
 'use strict'
 
 let express    = require('express')
+let Session    = require('express-session')
 let bodyParser = require('body-parser')
 let mongoose   = require('mongoose')
 let uuid       = require('node-uuid')
 let _          = require('lodash')
 let async      = require('async')
+let google     = require('googleapis')
+let jwt        = require('jsonwebtoken')
 let exec       = require('child_process').exec
+
+let plus       = google.plus('v1')
+let OAuth2     = google.auth.OAuth2
+let clientId   = require('./secret').clientId
+let gSecret    = require('./secret').gSecret
+let redirect   = require('./secret').redirect
+let secret     = require('./secret').secret
 
 let Playlist   = require('./models/playlist.js')
 let Song       = require('./models/song.js')
@@ -18,6 +28,7 @@ mongoose.Promise = require('bluebird')
 let app = express()
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 let COMMAND = 'youtube-dl -x -g -4 --no-cache-dir --no-warnings '
 
@@ -59,29 +70,37 @@ app.get('/playlist/:id', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  let user = req.body
-  User.findOne({username: user.username, password: user.password}, (err, user) => {
-    if (user === null) {
-      res.status(200).json()
-      return
-    }
-    if (!user.playlists) {
-      res.status(200).json(user)
-    }
-    let playlistsProcessed = 0
-    user.playlists.forEach((id, index) => {
-      Playlist.findOne({_id: id}, (err, playlist) => {
-        async.forEachOf(playlist.songs, (id, index, callback) => {
-          Song.findOne({_id: id}, (err, song) => {
-            playlist.songs[index] = song
-            callback(err)
+  new Promise((resolve, reject) => {
+    jwt.verify(req.body.token, secret, (err, resp) => {
+      if (err) reject(err)
+      resolve(resp)
+    })
+  })
+  .then((resp) => {
+    User.findOne({ _id: resp.id }, (err, user) => {
+      if (user === null) {
+        res.status(200).json()
+        return
+      }
+      console.log()
+      if (user.playlists.length == 0) {
+        res.status(200).json(user)
+      }
+      let playlistsProcessed = 0
+      user.playlists.forEach((id, index) => {
+        Playlist.findOne({_id: id}, (err, playlist) => {
+          async.forEachOf(playlist.songs, (id, index, callback) => {
+            Song.findOne({_id: id}, (err, song) => {
+              playlist.songs[index] = song
+              callback(err)
+            })
+          }, (err) => {
+            user.playlists[index] = playlist
+            playlistsProcessed++
+            if (playlistsProcessed === user.playlists.length) {
+              res.status(200).json(user)
+            }
           })
-        }, (err) => {
-          user.playlists[index] = playlist
-          playlistsProcessed++
-          if (playlistsProcessed === user.playlists.length) {
-            res.status(200).json(user)
-          }
         })
       })
     })
@@ -240,6 +259,61 @@ app.post('/playlist/:id/rename', (req, res) => {
       res.status(200).json()
     }
   )
+})
+
+app.get('/auth/google/request', (req, res) => {
+  let oauthclient = new OAuth2(clientId, gSecret, redirect)
+  let url = oauthclient.generateAuthUrl({
+      access_type: 'offline',
+      scope: 'https://www.googleapis.com/auth/plus.profile.emails.read'
+  })
+  res.redirect(url)
+})
+
+app.get('/auth/google/callback', (req, res) => {
+  let id = uuid.v1()
+  let email = ''
+  let oauthclient = new OAuth2(clientId, gSecret, redirect)
+  new Promise((resolve, reject) => {
+    oauthclient.getToken(req.query.code, (err, tokens) => {
+      if (err) reject(err)
+      resolve(tokens)
+    })
+  })
+  .then((tokens) => {
+    oauthclient.setCredentials(tokens)
+    return new Promise((resolve, reject) => {
+      plus.people.get({ userId: 'me', auth: oauthclient }, (err, res) => {
+        if (err) reject(err)
+        resolve(res)
+      })
+    })
+  })
+  .then((data) => {
+    email = data.emails[0].value
+    return User.findOne({ username: email })
+  })
+  .then((doc) => {
+    if (doc === null) {
+      let user = new User({ _id: id, username: email, playlists: [] })
+      return user.save()
+    } else {
+      id = doc.id
+      return true
+    }
+  })
+  .then((resp) => {
+    let token = jwt.sign({ id: id }, secret)
+    res.redirect('/?token=' + token)
+  })
+  .catch((err) => {
+    console.error(err)
+    res.redirect('/error')
+  })
+})
+
+app.get('/error', (req, res) => {
+  res.send('Sorry, something went wrong. Redirecting to homepage in a few seconds.<script>setTimeout(() => { window.location.replace("/") }, 5000)</script>')
 })
 
 app.listen(7070, (err) => {

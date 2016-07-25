@@ -5,15 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/css/site.css">
   <link rel="stylesheet" href="/css/music.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
 
 <body>
+
+  <div id="loadingdiv">
+    <img id="loadingring" src="./img/ring.svg">
+  </div>
+
+  <script> $('#loadingdiv').show(); setTimeout(() => { $('#loadingdiv').hide() }, 2500) </script>
+
   <div id="header">
     <div class="left">
       <span id="header-title">Music Player</span>
     </div>
     <div class="right">
-      <a id="home" href="/">Home</a>
+      <div id='userid'>
+        <a href="http://localhost:7070/auth/google/request"><img id="googleLogo" src="./img/btn_google_signin_dark_normal_web@2x.png"></a>
+      </div>
+    </div>
+    <div id="precache">
+      <img src="./img/btn_google_signin_dark_focus_web@2x.png">
+      <img src="./img/btn_google_signin_dark_pressed_web@2x.png">
+      <img src="./img/ring.svg">
     </div>
     <div class="right">
       <a id="github" href="https://github.com/nicholasbien/music-player">View Source on GitHub</a>
@@ -39,22 +54,6 @@
       <button>Cancel</button>
       <button id="delete-playlist-button">Delete Playlist</button>
     </form>
-    <div>
-      <button id="login-button">Login</button>
-      <button id="register-button">Register</button>
-      <form id="login-form">
-        <input id="login-username" placeholder="Username">
-        <input id="login-password" type="password" placeholder="Password">
-        <button id="login-submit">Submit</button>
-        <button>Cancel</button>
-      </form>
-      <form id="register-form">
-        <input id="register-username" placeholder="Username">
-        <input id="register-password" type="password" placeholder="Password">
-        <button id="register-submit">Submit</button>
-        <button>Cancel</button>
-      </form>
-    </div>
 
   </div>
   
@@ -101,10 +100,10 @@
   </div>
 
   <script src="/js/disc-jockey.js"></script>
-  <script src="/js/music.js"></script>
   <script src="/js/view.js"></script>
   <script src="/js/util.js"></script>
   <script src="/js/script.js"></script>
+  <script src="/js/auth.js"></script>
   <script src="/js/handler.js"></script>
 
 </body>

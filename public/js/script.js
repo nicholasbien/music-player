@@ -6,13 +6,12 @@ let currentSong = null
 let currentUser = null
 
 let dj = new DiscJockey()
-let music = new Music()
 
 window.addEventListener('load', (event) => {
   // currentPlaylist = Model.loadPlaylists();
   // View.displayAllPlaylists(Model.getAllPlaylists());
   // if (currentPlaylist) {
-  //     View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
+  //     View.selectPlaylist($$('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
   //     View.displayAllSongs(currentPlaylist, songClick);
   // }
 })
@@ -54,13 +53,13 @@ let moveTimeSlider = () => {
 }
 
 let updateTime = () => {
-  View.setTimes($('#time').value / 100 * dj.getDuration(), dj.getDuration())
+  View.setTimes($$('#time').value / 100 * dj.getDuration(), dj.getDuration())
 }
 
 let keepTime = setInterval(moveTimeSlider, 100)
 
 let timeChange = (input) => {
-  dj.setTime($('#time').value / 100 * dj.getDuration() || 0)
+  dj.setTime($$('#time').value / 100 * dj.getDuration() || 0)
   keepTime = setInterval(moveTimeSlider, 100)
   input.removeEventListener('mousemove', updateTime)
 }
@@ -71,7 +70,7 @@ let mouseDownOnTime = (input) => {
 }
 
 let addPlaylistButtonClick = () => {
-  let name = $('#new-playlist-name').value
+  let name = $$('#new-playlist-name').value
   if (name) {
     let playlist = {
       name: name,
@@ -91,7 +90,7 @@ let playlistSelect = (selected) => {
   currentUser.playlists.forEach((playlist) => {
     if (playlist._id === selected.id) {
       viewingPlaylist = playlist
-      $('#songs').innerHTML = ''
+      $$('#songs').innerHTML = ''
       View.displayAllSongs(viewingPlaylist, songClick)
       View.selectPlaylist(selected.id)
       dj.preloadTracks(viewingPlaylist.songs)
@@ -111,9 +110,9 @@ let songClick = (tr) => {
 }
 
 let addSongButtonClick = () => {
-  let url = $('#new-song-url').value
-  let title = $('#new-song-title').value
-  let artist = $('#new-song-artist').value
+  let url = $$('#new-song-url').value
+  let title = $$('#new-song-title').value
+  let artist = $$('#new-song-artist').value
   let song = {
     url: url,
     title: title,
@@ -224,7 +223,7 @@ let volumeChange = (input) => {
 }
 
 let editPlaylistButtonClick = () => {
-  let newName = $('#rename-playlist-box').value
+  let newName = $$('#rename-playlist-box').value
   if (newName === '') {
     return
   }
@@ -262,37 +261,27 @@ let removePlaylistButtonClick = () => {
   })
 }
 
-let loginUser = () => {
-  let username = $('#login-username').value
-  let password = $('#login-password').value
+let loginUser = (token) => {
   let user = {
-    username: username,
-    password: password
+    token: token
   }
-  request('POST', '/login', user, (user) => {
-    currentUser = user
-    let playlists = user.playlists
-    View.displayAllPlaylists(playlists)
-    if (playlists && playlists.length > 0) {
-      viewingPlaylist = playlists[0]
-      View.selectPlaylist(viewingPlaylist._id)
-      dj.preloadTracks(viewingPlaylist.songs)
-    }
-    View.displayAllSongs(viewingPlaylist, songClick)
-  })
-}
-
-let registerUser = () => {
-  let username = $('#register-username').value
-  let password = $('#register-password').value
-  let user = {
-    username: username,
-    password: password
-  }
-  request('POST', '/register', user, (user) => {
-    currentUser = user
-    viewingPlaylist = null
-    View.displayAllPlaylists(null)
-    View.displayAllSongs(viewingPlaylist, songClick)
+  $.ajax({
+    type: 'POST',
+    url: '/login',
+    data: user,
+    success: (user) => {
+      currentUser = user
+      $('#loadingdiv').show()
+      setTimeout(() => { $('#loadingdiv').hide() }, 2500)
+      document.getElementById('userid').innerHTML = user.username
+      let playlists = user.playlists
+      View.displayAllPlaylists(playlists)
+      if (playlists && playlists.length > 0) {
+        viewingPlaylist = playlists[0]
+        View.selectPlaylist(viewingPlaylist._id)
+      }
+      View.displayAllSongs(viewingPlaylist, songClick)
+    },
+    dataType: 'json'
   })
 }

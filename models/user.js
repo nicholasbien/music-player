@@ -4,8 +4,7 @@ let mongoose = require('mongoose')
 
 let UserSchema = mongoose.Schema({
   _id: String,
-  username: String,
-  password: String,
+  username: { type: String, unique: true },
   playlists: [String]
 })
 

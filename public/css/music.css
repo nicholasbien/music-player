@@ -221,3 +221,46 @@ input[type="range"]::-webkit-slider-thumb {
 #songTime {
   min-width: 35px;
 }
+
+#googleLogo {
+  height: 35px;
+  padding-top: 3px;
+  float: right;
+  margin-right: 0px;
+}
+
+#precache {
+  display: none;
+}
+
+#googleLogo:hover {
+  content:url("../img/btn_google_signin_dark_focus_web@2x.png");
+}
+
+#googleLogo:active {
+  content:url("../img/btn_google_signin_dark_pressed_web@2x.png");
+}
+
+#loadingdiv {  
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: white;
+  display: none;
+ }
+
+#loadingring {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
