@@ -1,7 +1,5 @@
 (function(window, document) {
 
-  let viewingPlaylist = null
-  let currentSong = null
   let currentUser = null
 
   let dj = new DiscJockey()
