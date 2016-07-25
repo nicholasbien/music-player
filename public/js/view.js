@@ -2,6 +2,16 @@
 
 let View = {}
 
+View.getIndexOfSong = (tr) => {
+  let trs = $('#songs').childNodes
+  for (let i = 0; i < trs.length; i++) {
+    if (trs[i] === tr) {
+      return i
+    }
+  }
+  return -1
+}
+
 View.displayNewPlaylist = (id, name) => {
   let li = create('li')
   li.id = id

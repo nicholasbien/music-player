@@ -5,7 +5,8 @@ let viewingPlaylist = null
 let currentSong = null
 let currentUser = null
 
-let audio = new Audio()
+let dj = new DiscJockey()
+let music = new Music()
 
 window.addEventListener('load', (event) => {
   // currentPlaylist = Model.loadPlaylists();
@@ -23,19 +24,16 @@ window.addEventListener('unload', (event) => {
 let changeSong = (song) => {
   currentSong = song
   if (currentSong) {
-    audio.src = currentSong.streamUrl
-    audio.play().catch(() => {
-      request('POST', '/song', song, (song) => {
-        currentSong = song
-        audio.src = currentSong.streamUrl
-        audio.play()
-      })
-    })
-  } else {
-    audio.src = ''
+    // dj.setTracklist(viewingPlaylist.songs)
+    // dj.startTrack(currentSong).catch((error) => {
+      // request('POST', '/song', song, (song) => {
+      //   currentSong = song
+      //   dj.startTrack(currentSong)
+      // })
+    //})
   }
-  View.setTimes(audio.currentTime, audio.duration)
-  View.setPlayButtonText(audio.paused)
+  View.setTimes(dj.getTime(), dj.getDuration())
+  View.setPlayButtonText(dj.isPaused())
   View.displayCurrentSong(currentSong)
   let index = currentPlaylist.songs.indexOf(currentSong)
   if (index != -1) {
@@ -43,21 +41,26 @@ let changeSong = (song) => {
   }
 }
 
-audio.addEventListener('ended', (event) => {
-  changeSong(getNextSong())
-})
+// audio.addEventListener('ended', (event) => {
+//   changeSong(getNextSong())
+// })
 
 let moveTimeSlider = () => {
-  View.setTimes(audio.currentTime, audio.duration)
+  if (dj.hasCurrentTrack()) {
+    View.setTimes(dj.getTime(), dj.getDuration())
+  } else {
+    View.setTimes(null)
+  }
 }
+
 let updateTime = () => {
-  View.setTimes($('#time').value / 100 * audio.duration, audio.duration)
+  View.setTimes($('#time').value / 100 * dj.getDuration(), dj.getDuration())
 }
 
 let keepTime = setInterval(moveTimeSlider, 100)
 
 let timeChange = (input) => {
-  audio.currentTime = $('#time').value / 100 * audio.duration || 0
+  dj.setTime($('#time').value / 100 * dj.getDuration() || 0)
   keepTime = setInterval(moveTimeSlider, 100)
   input.removeEventListener('mousemove', updateTime)
 }
@@ -91,6 +94,7 @@ let playlistSelect = (selected) => {
       $('#songs').innerHTML = ''
       View.displayAllSongs(viewingPlaylist, songClick)
       View.selectPlaylist(selected.id)
+      dj.preloadTracks(viewingPlaylist.songs)
       let index = viewingPlaylist.songs.indexOf(currentSong)
       if (index !== -1) {
         View.highlightCurrentSong(currentSong._id)
@@ -100,12 +104,10 @@ let playlistSelect = (selected) => {
 }
 
 let songClick = (tr) => {
-  viewingPlaylist.songs.forEach((song) => {
-    if (song._id === tr.id) {
-      currentPlaylist = viewingPlaylist
-      changeSong(song)
-    }
-  })
+  let index = View.getIndexOfSong(tr)
+  dj.setTracklist(viewingPlaylist.songs)
+  dj.startTrack(index)
+  View.setPlayButtonText(dj.isPaused())
 }
 
 let addSongButtonClick = () => {
@@ -123,34 +125,41 @@ let addSongButtonClick = () => {
       viewingPlaylist.songs.push(song)
       let index = viewingPlaylist.songs.length - 1
       View.displayNewSong(song._id, index, title, artist, songClick)
+      dj.addToTracklist(song)
     }
   })
 }
 
 let previousButtonClick = () => {
-  if (audio.paused || audio.currentTime > 2) {
-    audio.currentTime = 0
-  } else {
-    changeSong(getPreviousSong())
+  if (dj.hasCurrentTrack()) {
+    if (dj.isPaused() || dj.getTime() > 2) {
+      dj.setTime(0)
+    } else {
+      dj.startPreviousTrack()
+      View.setPlayButtonText(dj.isPaused())
+    }
   }
 }
 
 let playButtonClick = () => {
-  if (currentSong) {
-    if (audio.paused) {
-      audio.play()
+  if (dj.hasCurrentTrack()) {
+    if (dj.isPaused()) {
+      dj.play()
     } else {
-      audio.pause()
+      dj.pause()
     }
-    View.setPlayButtonText(audio.paused)
   } else if (viewingPlaylist.songs.length > 0) {
-    currentPlaylist = viewingPlaylist
-    changeSong(viewingPlaylist.songs[0])
+    dj.setTracklist(viewingPlaylist.songs)
+    dj.startTrack(0)
   }
+  View.setPlayButtonText(dj.isPaused())
 }
 
 let nextButtonClick = () => {
-  changeSong(getNextSong())
+  if (dj.hasCurrentTrack()) {
+    dj.startNextTrack()
+    View.setPlayButtonText(dj.isPaused())
+  }
 }
 
 let getPreviousSong = () => {
@@ -211,12 +220,7 @@ let removeSongButtonClick = (event, button) => {
 }
 
 let volumeChange = (input) => {
-  audio.volume = parseInt(input.value, 10) / 100.0
-}
-
-let muteButtonClick = () => {
-  audio.volume = 0
-  $('#volume').value = 0
+  dj.setVolume(parseInt(input.value, 10) / 100.0)
 }
 
 let editPlaylistButtonClick = () => {
@@ -253,6 +257,7 @@ let removePlaylistButtonClick = () => {
     View.displayAllSongs(viewingPlaylist, songClick)
     if (viewingPlaylist) {
         View.selectPlaylist(viewingPlaylist._id)
+        dj.preloadTracks(viewingPlaylist.songs)
     }
   })
 }
@@ -271,6 +276,7 @@ let loginUser = () => {
     if (playlists && playlists.length > 0) {
       viewingPlaylist = playlists[0]
       View.selectPlaylist(viewingPlaylist._id)
+      dj.preloadTracks(viewingPlaylist.songs)
     }
     View.displayAllSongs(viewingPlaylist, songClick)
   })
