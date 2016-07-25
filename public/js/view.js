@@ -41,6 +41,46 @@ function View() {
     }
   }
 
+  let displaySong = (song, callback) => {
+    let tr = create('tr')
+    tr.id = song._id
+    let index = $('#songs').childNodes.length
+    tr.onclick = () => { callback(tr) }
+    let td = create('td')
+    td.innerHTML = index + 1
+    td.className = 'song-number'
+    tr.appendChild(td)
+    td = create('td')
+    td.innerHTML = song.title
+    td.className = 'song-title'
+    tr.appendChild(td)
+    td = create('td')
+    td.innerHTML = song.artist
+    td.className = 'song-artist'
+    tr.appendChild(td)
+    td = create('td')
+    td.className = 'song-edit-buttons'
+    if ($('th.song-edit-buttons').style.display == 'none') {
+      td.style.display = 'none'
+    }
+    td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Up</button>' +
+             '<button onclick="moveDownButtonClick(event, this)">Down</button>' +
+             '<button onclick="removeSongButtonClick(event, this)">Delete</button>'
+    tr.appendChild(td)
+    $('#songs').appendChild(tr)
+  }
+
+  let selectPlaylist = (id) => {
+    let previous = $('#playlist-select > .selected')
+    if (previous) {
+      previous.className = ''
+    }
+    let current = document.getElementById(id)
+    if (current) {
+      current.className = 'selected'
+    }
+  }
+
   this.setPlaylist = (id, callback) => {
     clearSongs()
     playlists.forEach((playlist) => {
@@ -83,53 +123,14 @@ function View() {
     })
   }
 
-  let selectPlaylist = (id) => {
-    let previous = $('#playlist-select > .selected')
-    if (previous) {
-      previous.className = ''
-    }
-    let current = document.getElementById(id)
-    if (current) {
-      current.className = 'selected'
-    }
-  }
-
   this.addSong = (song, callback) => {
     currentPlaylist.songs.push(song)
     displaySong(song, callback)
   }
 
-  let displaySong = (song, callback) => {
-    let tr = create('tr')
-    tr.id = song._id
-    let index = $('#songs').childNodes.length
-    tr.onclick = () => { callback(tr) }
-    let td = create('td')
-    td.innerHTML = index + 1
-    td.className = 'song-number'
-    tr.appendChild(td)
-    td = create('td')
-    td.innerHTML = song.title
-    td.className = 'song-title'
-    tr.appendChild(td)
-    td = create('td')
-    td.innerHTML = song.artist
-    td.className = 'song-artist'
-    tr.appendChild(td)
-    td = create('td')
-    td.className = 'song-edit-buttons'
-    if ($('th.song-edit-buttons').style.display == 'none') {
-      td.style.display = 'none'
-    }
-    td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Up</button>' +
-             '<button onclick="moveDownButtonClick(event, this)">Down</button>' +
-             '<button onclick="removeSongButtonClick(event, this)">Delete</button>'
-    tr.appendChild(td)
-    $('#songs').appendChild(tr)
-  }
-
   this.removeSongFromPlaylist = (tr) => {
     tr.parentNode.removeChild(tr)
+    // remove also from currentPlaylist
   }
 
   this.setTimes = (time, duration) => {
