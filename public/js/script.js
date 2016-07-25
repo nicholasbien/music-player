@@ -1,6 +1,5 @@
 'use strict'
 
-let currentPlaylist = null
 let viewingPlaylist = null
 let currentSong = null
 let currentUser = null
@@ -35,7 +34,7 @@ let changeSong = (song) => {
   View.setTimes(dj.getTime(), dj.getDuration())
   View.setPlayButtonText(dj.isPaused())
   View.displayCurrentSong(currentSong)
-  let index = currentPlaylist.songs.indexOf(currentSong)
+  // let index = currentPlaylist.songs.indexOf(currentSong)
   if (index != -1) {
     View.highlightCurrentSong(song._id)
   }
@@ -162,30 +161,6 @@ let nextButtonClick = () => {
   }
 }
 
-let getPreviousSong = () => {
-  if (!currentPlaylist || !currentSong) {
-    return null
-  }
-  let index = currentPlaylist.songs.indexOf(currentSong)
-  if (index === 0 || index === -1) {
-    return null
-  } else {
-    return currentPlaylist.songs[index - 1]
-  }
-}
-
-let getNextSong = () => {
-  if (!currentPlaylist || !currentSong) {
-    return null
-  }
-  let index = currentPlaylist.songs.indexOf(currentSong)
-  if (index === currentPlaylist.songs.length - 1 || index === -1) {
-    return null
-  } else {
-    return currentPlaylist.songs[index + 1]
-  }
-}
-
 let moveUpButtonClick = (event, button) => {
 //     event.stopPropagation();
 //     var tr = button.parentNode.parentNode;
@@ -245,9 +220,6 @@ let removePlaylistButtonClick = () => {
   request('POST', url, null, () => {
     for (let i = 0; i < playlists.length; i++) {
       if (playlists[i]._id === playlistId) {
-        if (currentPlaylist === playlists[i]) {
-          currentPlaylist = null
-        }
         playlists.splice(i, 1)
         break
       }
