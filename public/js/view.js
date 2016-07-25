@@ -3,7 +3,7 @@
 function View() {
   let currentPlaylist = null
 
-  let highlightSong = (id) => {
+  let highlightCurrentSong = (id) => {
     let previous = $('#song-table tbody > .playing')
     if (previous) {
       previous.className = ''
@@ -22,16 +22,17 @@ function View() {
     }
   }
 
-  this.setPlaylist = (playlist) => {
+  this.setPlaylist = (playlist, callback) => {
     currentPlaylist = playlist
-    this.displaySongs(playlist.songs)
+    this.selectPlaylist(playlist._id)
+    addSongs(playlist.songs, callback)
   }
 
-  this.displaySongs = (songs, callback) => {
+  let addSongs = (songs, callback) => {
     $('#songs').innerHTML = ''
     if (songs.length > 0) {
       songs.forEach((song, index) => {
-        this.displaySong(song, callback)
+        this.addSong(song, callback)
       })
     } else {
       hide('th.song-edit-buttons')
@@ -42,7 +43,7 @@ function View() {
     this.setTimes(null)
     displayCurrentSong(song)
     if (currentPlaylist === playlist) {
-      this.highlightCurrentSong(song._id)
+      highlightCurrentSong(song._id)
     }
   }
 
@@ -56,10 +57,10 @@ function View() {
     return -1
   }
 
-  this.displayNewPlaylist = (id, name) => {
+  this.addPlaylist = (playlist) => {
     let li = create('li')
-    li.id = id
-    li.innerHTML = name
+    li.id = playlist._id
+    li.innerHTML = playlist.name
     $('#playlist-select').appendChild(li)
     show('#new-song-button')
     show('#edit-playlist-button')
@@ -76,7 +77,7 @@ function View() {
     }
   }
 
-  this.displaySong = (song, callback) => {
+  this.addSong = (song, callback) => {
     let tr = create('tr')
     tr.id = song._id
     tr.onclick = () => { callback(tr) }
@@ -105,11 +106,11 @@ function View() {
     $('#songs').appendChild(tr)
   }
 
-  this.displayAllPlaylists = (playlists) => {
+  this.addPlaylists = (playlists) => {
     $('#playlist-select').innerHTML = ''
     if (playlists) {
       playlists.forEach((playlist) => {
-        this.displayNewPlaylist(playlist._id, playlist.name)
+        this.addPlaylist(playlist)
       })
     }
     
@@ -138,5 +139,9 @@ function View() {
     } else {
       $('#play-button').innerHTML = '| |'
     }
+  }
+
+  this.getCurrentPlaylist = () => {
+    return currentPlaylist
   }
 }

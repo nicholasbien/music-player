@@ -237,7 +237,7 @@ app.post('/playlist/:id/rename', (req, res) => {
         res.status(400).json()
         return
       }
-      res.status(200).json()
+      res.status(200).json(playlist)
     }
   )
 })

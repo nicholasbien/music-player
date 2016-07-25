@@ -7,24 +7,11 @@
   let dj = new DiscJockey()
   let view = new View()
 
-  window.addEventListener('load', (event) => {
-    // currentPlaylist = Model.loadPlaylists();
-    // view.displayAllPlaylists(Model.getAllPlaylists());
-    // if (currentPlaylist) {
-    //     view.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-    //     view.displayAllSongs(currentPlaylist, songClick);
-    // }
-  })
-
   let reprocessSong = (song) => {
     request('POST', '/song', song, (song) => {
       dj.preloadTrack(song)
     })
   }
-
-  window.addEventListener('unload', (event) => {
-    localStorage.clear()
-  })
 
   let moveTimeSlider = () => {
     if (dj.hasCurrentTrack()) {
@@ -64,10 +51,7 @@
       }
       let url = '/user/' + currentUser._id + '/playlist'
       request('POST', url, playlist, (playlist) => {
-        viewingPlaylist = playlist
-        view.displayNewPlaylist(playlist._id, name)
-        view.displaySongs(viewingPlaylist.songs, songClick)
-        view.selectPlaylist(playlist._id)
+        view.setPlaylist(playlist, songClick)
       })
     }
   }
@@ -75,23 +59,16 @@
   window.playlistSelect = (selected) => {
     currentUser.playlists.forEach((playlist) => {
       if (playlist._id === selected.id) {
-        viewingPlaylist = playlist
         $('#songs').innerHTML = ''
-        view.displaySongs(viewingPlaylist.songs, songClick)
-        view.selectPlaylist(selected.id)
-        dj.preloadTracks(viewingPlaylist.songs, reprocessSong)
-        let currentSong = dj.getCurrentSong
-        let index = viewingPlaylist.songs.indexOf(currentSong)
-        if (index !== -1) {
-          view.highlightCurrentSong(currentSong)
-        }
+        view.setPlaylist(playlist, songClick)
+        dj.preloadTracks(playlist.songs, reprocessSong)
       }
     })
   }
 
   window.songClick = (tr) => {
     let index = view.getIndexOfSong(tr)
-    dj.setTracklist(viewingPlaylist)
+    dj.setTracklist(view.getCurrentPlaylist())
     dj.startTrack(index)
     view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
   }
@@ -105,11 +82,11 @@
       title: title,
       artist: artist
     }
-    let requestUrl = '/playlist/' + viewingPlaylist._id + '/song'
+    let visiblePlaylist = view.getCurrentPlaylist()
+    let requestUrl = '/playlist/' + visiblePlaylist._id + '/song'
     request('POST', requestUrl, song, (song) => {
       if (song) {
-        viewingPlaylist.songs.push(song)
-        view.displaySong(song, songClick)
+        view.addSong(song, songClick)
         dj.addToTracklist(song)
       }
     })
@@ -184,12 +161,11 @@
     if (newName === '') {
       return
     }
-    viewingPlaylist.name = newName
-    let playlistId = viewingPlaylist._id
+    let visiblePlaylist = view.getCurrentPlaylist()
+    let playlistId = visiblePlaylist._id
     let url = '/playlist/' + playlistId + '/rename'
-    request('POST', url, viewingPlaylist, () => {
-      view.displayAllPlaylists(currentUser.playlists)
-      view.selectPlaylist(viewingPlaylist._id)
+    request('POST', url, visiblePlaylist, (playlist) => {
+      // rename on view
     })
   }
 
@@ -205,13 +181,14 @@
           break
         }
       }
-      view.displayAllPlaylists(currentUser.playlists)
-      viewingPlaylist = currentUser.playlists[0] || null
-      view.displaySongs(viewingPlaylist.songs, songClick)
-      if (viewingPlaylist) {
-          view.selectPlaylist(viewingPlaylist._id)
-          dj.preloadTracks(viewingPlaylist.songs, reprocessSong)
-      }
+      // remove playlist on view
+      // view.displayAllPlaylists(currentUser.playlists)
+      // viewingPlaylist = currentUser.playlists[0] || null
+      // view.displaySongs(viewingPlaylist.songs, songClick)
+      // if (viewingPlaylist) {
+      //     view.selectPlaylist(viewingPlaylist._id)
+      //     dj.preloadTracks(viewingPlaylist.songs, reprocessSong)
+      // }
     })
   }
 
@@ -225,13 +202,11 @@
     request('POST', '/login', user, (user) => {
       currentUser = user
       let playlists = user.playlists
-      view.displayAllPlaylists(playlists)
+      view.addPlaylists(playlists)
       if (playlists && playlists.length > 0) {
-        viewingPlaylist = playlists[0]
-        view.selectPlaylist(viewingPlaylist._id)
-        dj.preloadTracks(viewingPlaylist.songs, reprocessSong)
+        view.setPlaylist(playlists[0], songClick)
+        dj.preloadTracks(playlists[0].songs, reprocessSong)
       }
-      view.displaySongs(viewingPlaylist.songs, songClick)
     })
   }
 
@@ -244,10 +219,18 @@
     }
     request('POST', '/register', user, (user) => {
       currentUser = user
-      viewingPlaylist = null
-      view.displayAllPlaylists(null)
-      view.displaySongs(viewingPlaylist.songs, songClick)
+      // set blank view
+      // view.displayAllPlaylists(null)
+      // view.displaySongs(viewingPlaylist.songs, songClick)
     })
   }
+
+  window.addEventListener('load', (event) => {
+
+  })
+
+  window.addEventListener('unload', (event) => {
+
+  })
 
 })(window, document)
