@@ -88,7 +88,7 @@ app.post('/login', (req, res) => {
   })
 })
 
-app.post('/user', (req, res) => {
+app.post('/register', (req, res) => {
   let user = req.body
   user._id = uuid.v1()
   User.findOne({username: user.username}, (err, existingUser) => {
@@ -197,6 +197,30 @@ app.post('/song', (req, res) => {
       }
     )
   })
+})
+
+app.post('/user/:userId/playlist/:playlistId/delete', (req, res) => {
+  let userId = req.params.userId
+  let playlistId = req.params.playlistId
+  User.findOneAndUpdate(
+    {_id: userId},
+    {$pull: {playlists: playlistId}},
+    {new: true},
+    (err, user) => {
+      if (err) {
+        console.log(err)
+        res.status(400).json()
+        return
+      }
+      Playlist.remove({_id: playlistId}, (err) => {
+        if (err) {
+          console.log(err)
+          res.status(400).json()
+          return
+        }
+        res.status(200).json()
+      })
+    })
 })
 
 app.listen(7070, (err) => {

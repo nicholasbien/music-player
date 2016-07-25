@@ -229,13 +229,27 @@ let editPlaylistButtonClick = () => {
 }
 
 let removePlaylistButtonClick = () => {
-//     Model.removePlaylist(currentPlaylist);
-//     View.displayAllPlaylists(Model.getAllPlaylists());
-//     currentPlaylist = Model.getAllPlaylists()[0] || null;
-//     View.displayAllSongs(currentPlaylist, songClick);
-//     if (currentPlaylist) {
-//         View.selectPlaylist($('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-//     }
+  let userId = currentUser._id
+  let playlistId = viewingPlaylist._id
+  let url = '/user/' + userId + '/playlist/' + playlistId + '/delete'
+  let playlists = currentUser.playlists
+  request('POST', url, null, () => {
+    for (let i = 0; i < playlists.length; i++) {
+      if (playlists[i]._id === playlistId) {
+        if (currentPlaylist === playlists[i]) {
+          currentPlaylist = null
+        }
+        playlists.splice(i, 1)
+        break
+      }
+    }
+    View.displayAllPlaylists(currentUser.playlists)
+    viewingPlaylist = currentUser.playlists[0] || null
+    View.displayAllSongs(viewingPlaylist, songClick)
+    if (viewingPlaylist) {
+        View.selectPlaylist(viewingPlaylist._id)
+    }
+  })
 }
 
 let loginUser = () => {
@@ -264,7 +278,7 @@ let registerUser = () => {
     username: username,
     password: password
   }
-  request('POST', '/user', user, (user) => {
+  request('POST', '/register', user, (user) => {
     currentUser = user
     viewingPlaylist = null
     View.displayAllPlaylists(null)
