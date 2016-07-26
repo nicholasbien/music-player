@@ -23,7 +23,7 @@ function View() {
     }
   }
 
-  let displayCurrentSong = (song) => {
+ this.displayCurrentSong = (song) => {
     if (!song) {
       $('#current-song').innerHTML = ''
     } else {
@@ -94,7 +94,12 @@ function View() {
 
   this.startSong = (song, playlist) => {
     this.setTimes(null)
-    displayCurrentSong(song)
+    this.displayCurrentSong(song)
+    if (song) {
+      this.setPlayButtonText(false)
+    } else {
+      this.setPlayButtonText(true)
+    }
   }
 
   this.getIndexOfSong = (tr) => {

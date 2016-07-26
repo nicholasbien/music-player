@@ -1,6 +1,6 @@
 (function(window, document) {
 
-  let currentUser = null
+  let userId = null
 
   let dj = new DiscJockey()
   let view = new View()
@@ -17,6 +17,7 @@
     } else {
       view.setTimes(null)
     }
+    view.displayCurrentSong(dj.getCurrentSong())
   }
 
   let updateTime = () => {
@@ -47,8 +48,9 @@
         name: name,
         songs: []
       }
-      let url = '/user/' + currentUser._id + '/playlist'
+      let url = '/user/' + userId + '/playlist'
       request('POST', url, playlist, (playlist) => {
+        dj.preloadTracks(playlist.songs, reprocessSong)
         view.addPlaylist(playlist)
         view.setPlaylist(playlist._id, songClick)
       })
@@ -56,15 +58,14 @@
   }
 
   window.playlistSelect = (selected) => {
-    view.setPlaylist(selected.id, songClick)
     dj.preloadTracks(view.getCurrentPlaylist().songs, reprocessSong)
+    view.setPlaylist(selected.id, songClick)
   }
 
   window.songClick = (clicked) => {
-    dj.setTracklist(view.getCurrentPlaylist())
-    let index = view.getIndexOfSong(clicked)
-    dj.startTrack(index)
     view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+    dj.setTracklist(view.getCurrentPlaylist())
+    dj.startTrack(view.getIndexOfSong(clicked))
   }
 
   window.addSongButtonClick = () => {
@@ -80,9 +81,9 @@
     let requestUrl = '/playlist/' + visiblePlaylist._id + '/song'
     request('POST', requestUrl, song, (song) => {
       if (song) {
-        view.addSong(song, songClick)
         dj.preloadTrack(song)
         dj.addToTracklist(song)
+        view.addSong(song, songClick)
       }
     })
   }
@@ -102,8 +103,10 @@
     if (dj.hasCurrentTrack()) {
       if (dj.isPaused()) {
         dj.play()
+        view.setPlayButtonText(false)
       } else {
         dj.pause()
+        view.setPlayButtonText(true)
       }
     } else {
       let visiblePlaylist = view.getCurrentPlaylist()
@@ -168,17 +171,10 @@
   }
 
   window.removePlaylistButtonClick = () => {
-    let userId = currentUser._id
+    let userId = userId
     let playlistId = viewingPlaylist._id
     let url = '/user/' + userId + '/playlist/' + playlistId + '/delete'
-    let playlists = currentUser.playlists
     request('POST', url, null, () => {
-      for (let i = 0; i < playlists.length; i++) {
-        if (playlists[i]._id === playlistId) {
-          playlists.splice(i, 1)
-          break
-        }
-      }
       // remove playlist on view
       // view.displayAllPlaylists(currentUser.playlists)
       // viewingPlaylist = currentUser.playlists[0] || null
@@ -198,7 +194,7 @@
       password: password
     }
     request('POST', '/login', user, (user) => {
-      currentUser = user
+      userId = user._id
       let playlists = user.playlists
       view.addPlaylists(playlists)
       if (playlists && playlists.length > 0) {
@@ -216,7 +212,7 @@
       password: password
     }
     request('POST', '/register', user, (user) => {
-      currentUser = user
+      userId = user._id
       // set blank view
       // view.displayAllPlaylists(null)
       // view.displaySongs(viewingPlaylist.songs, songClick)
