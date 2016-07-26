@@ -50,7 +50,7 @@
       }
       let url = '/user/' + userId + '/playlist'
       request('POST', url, playlist, (playlist) => {
-        dj.preloadTracks(playlist.songs, reprocessSong)
+        dj.preloadTracks(playlist, reprocessSong)
         view.addPlaylist(playlist)
         view.setPlaylist(playlist._id, songClick)
       })
@@ -58,8 +58,8 @@
   }
 
   window.playlistSelect = (selected) => {
-    dj.preloadTracks(view.getCurrentPlaylist().songs, reprocessSong)
     view.setPlaylist(selected.id, songClick)
+    dj.preloadTracks(view.getCurrentPlaylist(), reprocessSong)
   }
 
   window.songClick = (clicked) => {
@@ -199,7 +199,7 @@
       view.addPlaylists(playlists)
       if (playlists && playlists.length > 0) {
         view.setPlaylist(playlists[0]._id, songClick)
-        dj.preloadTracks(playlists[0].songs, reprocessSong)
+        dj.preloadTracks(playlists[0], reprocessSong)
       }
     })
   }

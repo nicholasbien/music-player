@@ -3,7 +3,9 @@ function DiscJockey() {
   let tracklist = []
   let currentTrack = null
   let resetCurrentTrack = () => {
-    currentTrack.pause()
+    if (!currentTrack.paused) {
+      currentTrack.pause()
+    }
     currentTrack.currentTime = 0
     currentTrack = null
   }
@@ -21,7 +23,7 @@ function DiscJockey() {
   }
 
   this.preloadTrack = (song, errorCallback) => {
-    if (tracks[song._id] && tracks[song._id].src === song.streamUrl) {
+    if (tracks[song._id] && tracks[song._id].firstChild.src === song.streamUrl) {
       return
     }
     tracks[song._id] = new Audio()
@@ -35,8 +37,8 @@ function DiscJockey() {
     })
   }
 
-  this.preloadTracks = (songs, errorCallback) => {
-    songs.forEach((song) => {
+  this.preloadTracks = (playlist, errorCallback) => {
+    playlist.songs.forEach((song) => {
       this.preloadTrack(song, errorCallback)
     })
   }
