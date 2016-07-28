@@ -99,6 +99,7 @@ function View() {
   this.setCurrentSong = (song) => {
     if (!song) {
       $('#current-song').innerHTML = ''
+      this.setPlayButtonText(true)
     } else {
       $('#current-song').innerHTML = song.artist + ' - ' + song.title
       highlightCurrentSong(song._id)

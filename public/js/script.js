@@ -63,9 +63,9 @@
   }
 
   window.songClick = (clicked) => {
-    view.startSong(dj.getCurrentSong())
     dj.setTracklist(view.getCurrentPlaylist())
     dj.startTrack(view.getIndexOfSong(clicked))
+    view.startSong(dj.getCurrentSong())
   }
 
   window.addSongButtonClick = () => {

@@ -60,7 +60,6 @@ app.get('/playlist/:id', (req, res) => {
 
 app.post('/login', (req, res) => {
   let user = req.body
-  console.log(user)
   User.findOne({username: user.username, password: user.password}, (err, user) => {
     if (user === null) {
       console.log('Incorrect username/password combination')
