@@ -109,7 +109,6 @@ app.post('/register', (req, res) => {
         console.log(err)
         res.status(400).json()
       }
-      console.log(user)
       res.status(200).json(user)
     })
   })
