@@ -67,6 +67,7 @@ app.post('/login', (req, res) => {
     }
     if (!user.playlists) {
       res.status(200).json(user)
+      return
     }
     let playlistsProcessed = 0
     user.playlists.forEach((id, index) => {
@@ -80,6 +81,7 @@ app.post('/login', (req, res) => {
           user.playlists[index] = playlist
           playlistsProcessed++
           if (playlistsProcessed === user.playlists.length) {
+            console.log(err, user)
             res.status(200).json(user)
           }
         })
@@ -103,13 +105,21 @@ app.post('/user/:id/playlist', (req, res) => {
   let playlist = req.body
   playlist._id = uuid.v1()
   Playlist.create(playlist, (err, playlist) => {
-    if (err) console.log(err)
+    if (err) {
+      console.log(err)
+      res.status(400).json()
+      return
+    }
     User.findOneAndUpdate(
       {_id: id},
       {$push: {playlists: playlist._id}},
       {new: true},
       (err, user) => {
-        if (err) console.log(err)
+        if (err) {
+          console.log(err)
+          res.status(400).json()
+          return
+        }
         res.status(200).json(playlist)
       }
     )
