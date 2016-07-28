@@ -195,12 +195,14 @@
       password: password
     }
     request('POST', '/login', user, (user) => {
-      userId = user._id
-      let playlists = user.playlists
-      view.addPlaylists(playlists)
-      if (playlists && playlists.length > 0) {
-        view.setPlaylist(playlists[0]._id, songClick)
-        dj.preloadTracks(playlists[0], reprocessSong)
+      if (user) {
+        userId = user._id
+        let playlists = user.playlists
+        view.addPlaylists(playlists)
+        if (playlists && playlists.length > 0) {
+          view.setPlaylist(playlists[0]._id, songClick)
+          dj.preloadTracks(playlists[0], reprocessSong)
+        }
       }
     })
   }

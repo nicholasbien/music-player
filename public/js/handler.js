@@ -30,7 +30,6 @@ $('#new-playlist-form').addEventListener('submit', (event) => {
     show('#new-song-button')
   }
   show('#new-playlist-button')
-
 })
 
 $('#new-playlist-submit').addEventListener('click', addPlaylistButtonClick)
@@ -130,4 +129,4 @@ $('#register-form').addEventListener('submit', () => {
   show('#register-button', true)
 })
 
-$('#register-submit').addEventListener('submit', registerUserButtonClick)
+$('#register-submit').addEventListener('click', registerUserButtonClick)
