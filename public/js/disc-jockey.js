@@ -119,7 +119,12 @@ function DiscJockey() {
     }
   }
 
-  this.getCurrentPlaylist = () => {
-    return tracklist.playlist
+  this.removeTrack = (songId) => {
+    for (let i = 0; i < tracklist.length; i++) {
+      if (tracklist[i].song._id === songId) {
+        tracklist.splice(i, 1)
+        break
+      }
+    }
   }
 }

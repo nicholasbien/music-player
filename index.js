@@ -81,7 +81,6 @@ app.post('/login', (req, res) => {
           user.playlists[index] = playlist
           playlistsProcessed++
           if (playlistsProcessed === user.playlists.length) {
-            console.log(err, user)
             res.status(200).json(user)
           }
         })

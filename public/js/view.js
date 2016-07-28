@@ -89,11 +89,19 @@ function View() {
     })
   }
 
+  let updateIndexes = () => {
+    let trs = $('#songs').childNodes
+    for (let i = 0; i < trs.length; i++) {
+      trs[i].firstChild.innerHTML = i + 1
+    }
+  }
+
   this.setCurrentSong = (song) => {
     if (!song) {
       $('#current-song').innerHTML = ''
     } else {
       $('#current-song').innerHTML = song.artist + ' - ' + song.title
+      highlightCurrentSong(song._id)
     }
   }
 
@@ -109,9 +117,9 @@ function View() {
     displaySongs(currentPlaylist.songs, callback)
   }
 
-  this.startSong = (song, playlist) => {
+  this.startSong = (song) => {
     this.setTimes(null)
-    this.displayCurrentSong(song)
+    this.setCurrentSong(song)
     if (song) {
       this.setPlayButtonText(false)
     } else {
@@ -147,7 +155,13 @@ function View() {
 
   this.removeSongFromPlaylist = (tr) => {
     tr.parentNode.removeChild(tr)
-    // remove also from currentPlaylist
+    updateIndexes()
+    for (let i = 0; i < currentPlaylist.songs.length; i++) {
+      if (currentPlaylist.songs[i] === tr.id) {
+        currentPlaylist.songs.splice(i, 1)
+        break
+      }
+    }
   }
 
   this.setTimes = (time, duration) => {

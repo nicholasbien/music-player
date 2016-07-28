@@ -63,7 +63,7 @@
   }
 
   window.songClick = (clicked) => {
-    view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+    view.startSong(dj.getCurrentSong())
     dj.setTracklist(view.getCurrentPlaylist())
     dj.startTrack(view.getIndexOfSong(clicked))
   }
@@ -94,7 +94,7 @@
         dj.setTime(0)
       } else {
         dj.startPreviousTrack()
-        view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+        view.startSong(dj.getCurrentSong())
       }
     }
   }
@@ -113,7 +113,7 @@
       if (visiblePlaylist && visiblePlaylist.songs.length > 0) {
         dj.setTracklist(visiblePlaylist)
         dj.startTrack(0)
-        view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+        view.startSong(dj.getCurrentSong())
       }
     }
   }
@@ -121,7 +121,7 @@
   window.nextButtonClick = () => {
     if (dj.hasCurrentTrack()) {
       dj.startNextTrack()
-      view.startSong(dj.getCurrentSong(), dj.getCurrentPlaylist())
+      view.startSong(dj.getCurrentSong())
     }
   }
   window.moveUpButtonClick = (event, button) => {
@@ -142,9 +142,9 @@
     event.stopPropagation()
     let tr = button.parentNode.parentNode
     let songId = tr.id
-    let viewingPlaylist = view.getCurrentPlaylist()
-    let playlistId = viewingPlaylist._id
-    let songs = viewingPlaylist.songs
+    let visiblePlaylist = view.getCurrentPlaylist()
+    let playlistId = visiblePlaylist._id
+    let songs = visiblePlaylist.songs
     let url = '/playlist/' + playlistId + '/song/' + songId + '/delete'
     request('POST', url, null, () => {
       for (let i = 0; i < songs.length; i++) {
@@ -154,7 +154,7 @@
         }
       }
       view.removeSongFromPlaylist(tr)
-      // view.displaySongs()
+      dj.removeTrack(songId)
     })
   }
 
@@ -176,14 +176,7 @@
     let url = '/user/' + userId + '/playlist/' + playlistId + '/delete'
     request('POST', url, null, () => {
       view.removePlaylist(playlistId)
-      // remove playlist on view
-      // view.displayAllPlaylists(currentUser.playlists)
-      // viewingPlaylist = currentUser.playlists[0] || null
-      // view.displaySongs(viewingPlaylist.songs, songClick)
-      // if (viewingPlaylist) {
-      //     view.selectPlaylist(viewingPlaylist._id)
-      //     dj.preloadTracks(viewingPlaylist.songs, reprocessSong)
-      // }
+      dj.preloadTracks(view.getCurrentPlaylist())
     })
   }
 
