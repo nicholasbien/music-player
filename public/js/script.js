@@ -17,7 +17,7 @@
     } else {
       view.setTimes(null)
     }
-    view.displayCurrentSong(dj.getCurrentSong())
+    view.setCurrentSong(dj.getCurrentSong())
   }
 
   let updateTime = () => {
@@ -142,6 +142,7 @@
     event.stopPropagation()
     let tr = button.parentNode.parentNode
     let songId = tr.id
+    let viewingPlaylist = view.getCurrentPlaylist()
     let playlistId = viewingPlaylist._id
     let songs = viewingPlaylist.songs
     let url = '/playlist/' + playlistId + '/song/' + songId + '/delete'
@@ -171,10 +172,10 @@
   }
 
   window.removePlaylistButtonClick = () => {
-    let userId = userId
-    let playlistId = viewingPlaylist._id
+    let playlistId = view.getCurrentPlaylist()._id
     let url = '/user/' + userId + '/playlist/' + playlistId + '/delete'
     request('POST', url, null, () => {
+      view.removePlaylist(playlistId)
       // remove playlist on view
       // view.displayAllPlaylists(currentUser.playlists)
       // viewingPlaylist = currentUser.playlists[0] || null

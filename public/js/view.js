@@ -3,6 +3,7 @@
 function View() {
   let playlists = []
   let currentPlaylist = null
+  let clickCallback = null
 
   let clearPlaylists = () => {
     $('#playlist-select').innerHTML = ''
@@ -20,14 +21,6 @@ function View() {
     let current = document.getElementById(id)
     if (current) {
       current.className = 'playing'
-    }
-  }
-
- this.displayCurrentSong = (song) => {
-    if (!song) {
-      $('#current-song').innerHTML = ''
-    } else {
-      $('#current-song').innerHTML = song.artist + ' - ' + song.title
     }
   }
 
@@ -81,7 +74,31 @@ function View() {
     }
   }
 
+  let displayPlaylist = (playlist) => {
+    let li = create('li')
+    li.id = playlist._id
+    li.innerHTML = playlist.name
+    $('#playlist-select').appendChild(li)
+    show('#new-song-button')
+    show('#edit-playlist-button')
+  }
+
+  let displayPlaylists = (playlists) => {
+    playlists.forEach((playlist) => {
+      displayPlaylist(playlist)
+    })
+  }
+
+  this.setCurrentSong = (song) => {
+    if (!song) {
+      $('#current-song').innerHTML = ''
+    } else {
+      $('#current-song').innerHTML = song.artist + ' - ' + song.title
+    }
+  }
+
   this.setPlaylist = (id, callback) => {
+    clickCallback = callback
     clearSongs()
     playlists.forEach((playlist) => {
       if (playlist._id === id) {
@@ -114,12 +131,7 @@ function View() {
 
   this.addPlaylist = (playlist) => {
     playlists.push(playlist)
-    let li = create('li')
-    li.id = playlist._id
-    li.innerHTML = playlist.name
-    $('#playlist-select').appendChild(li)
-    show('#new-song-button')
-    show('#edit-playlist-button')
+    displayPlaylist(playlist)
   }
 
   this.addPlaylists = (playlists) => {
@@ -161,5 +173,21 @@ function View() {
 
   this.getCurrentPlaylist = () => {
     return currentPlaylist
+  }
+
+  this.removePlaylist = (id) => {
+    let newIndex = -1
+    for (let i = 0; i < playlists.length; i++) {
+      if (playlists[i]._id === id) {
+        playlists.splice(i, 1)
+        newIndex = i - 1
+        break
+      }
+    }
+    clearPlaylists()
+    displayPlaylists(playlists)
+    if (newIndex > 0) {
+      this.setPlaylist(playlists[newIndex]._id, clickCallback)
+    }
   }
 }
