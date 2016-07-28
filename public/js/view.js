@@ -83,7 +83,7 @@ function View() {
     show('#edit-playlist-button')
   }
 
-  let displayPlaylists = (playlists) => {
+  let displayPlaylists = () => {
     playlists.forEach((playlist) => {
       displayPlaylist(playlist)
     })
@@ -199,9 +199,27 @@ function View() {
       }
     }
     clearPlaylists()
-    displayPlaylists(playlists)
+    displayPlaylists()
     if (newIndex > 0) {
       this.setPlaylist(playlists[newIndex]._id, clickCallback)
     }
+  }
+
+  this.reset = () => {
+    clearSongs()
+    clearPlaylists()
+    playlists = []
+    currentPlaylist = null
+  }
+
+  this.renamePlaylist = (renamedPlaylist) => {
+    playlists.forEach((playlist) => {
+      if (playlist._id === renamedPlaylist._id) {
+        playlist.name = renamedPlaylist.name
+      }
+    })
+    clearPlaylists()
+    displayPlaylists()
+    this.setPlaylist(renamedPlaylist, clickCallback)
   }
 }

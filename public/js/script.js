@@ -164,10 +164,11 @@
       return
     }
     let visiblePlaylist = view.getCurrentPlaylist()
+    visiblePlaylist.name = newName
     let playlistId = visiblePlaylist._id
     let url = '/playlist/' + playlistId + '/rename'
     request('POST', url, visiblePlaylist, (playlist) => {
-      // rename on view
+      view.renamePlaylist(playlist)
     })
   }
 
@@ -208,10 +209,10 @@
       password: password
     }
     request('POST', '/register', user, (user) => {
-      userId = user._id
-      // set blank view
-      // view.displayAllPlaylists(null)
-      // view.displaySongs(viewingPlaylist.songs, songClick)
+      if (user) {
+        userId = user._id
+        view.reset()
+      }
     })
   }
 

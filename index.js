@@ -60,12 +60,14 @@ app.get('/playlist/:id', (req, res) => {
 
 app.post('/login', (req, res) => {
   let user = req.body
+  console.log(user)
   User.findOne({username: user.username, password: user.password}, (err, user) => {
     if (user === null) {
-      res.status(200).json()
+      console.log('Incorrect username/password combination')
+      res.status(400).json()
       return
     }
-    if (!user.playlists) {
+    if (!user.playlists.length) {
       res.status(200).json(user)
       return
     }
@@ -93,7 +95,22 @@ app.post('/register', (req, res) => {
   let user = req.body
   user._id = uuid.v1()
   User.findOne({username: user.username}, (err, existingUser) => {
+    if (err) {
+      console.log(err)
+      res.status(400).json()
+      return
+    }
+    if (existingUser) {
+      console.log('User with username "' + user.username + '" already exists')
+      res.status(400).json()
+      return
+    }
     User.create(user, (err, user) => {
+      if (err) {
+        console.log(err)
+        res.status(400).json()
+      }
+      console.log(user)
       res.status(200).json(user)
     })
   })
@@ -238,7 +255,7 @@ app.post('/playlist/:id/rename', (req, res) => {
   let playlist = req.body
   Playlist.findOneAndUpdate(
     {_id: id},
-    {name: playlist.name},
+    {$set: {name: playlist.name}},
     {new: true},
     (err, playlist) => {
       if (err) {
