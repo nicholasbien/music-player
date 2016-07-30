@@ -2,6 +2,8 @@ function DiscJockey() {
   let tracks = {}
   let tracklist = []
   let currentTrack = null
+  let currentVolume = 1.0
+
   let resetCurrentTrack = () => {
     if (!currentTrack.paused) {
       currentTrack.pause()
@@ -56,6 +58,7 @@ function DiscJockey() {
       resetCurrentTrack()
     }
     currentTrack = tracklist[index]
+    currentTrack.volume = currentVolume
     this.play()
   }
 
@@ -104,11 +107,12 @@ function DiscJockey() {
   }
 
   this.getVolume = () => {
-    return currentTrack.volume
+    return currentVolume
   }
 
   this.setVolume = (volume) => {
-    currentTrack.volume = volume
+    currentVolume = volume
+    currentTrack.volume = currentVolume
   }
 
   this.getCurrentSong = () => {
