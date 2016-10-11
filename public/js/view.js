@@ -3,7 +3,7 @@
 let View = {}
 
 View.getIndexOfSong = (tr) => {
-  let trs = $$('#songs').childNodes
+  let trs = $('#songs')[0].childNodes
   for (let i = 0; i < trs.length; i++) {
     if (trs[i] === tr) {
       return i
@@ -13,16 +13,17 @@ View.getIndexOfSong = (tr) => {
 }
 
 View.displayNewPlaylist = (id, name) => {
-  let li = create('li')
+  // HERE
+  let li = document.createElement('li')
   li.id = id
   li.innerHTML = name
-  $$('#playlist-select').appendChild(li)
-  show('#new-song-button')
-  show('#edit-playlist-button')
+  $('#playlist-select').append(li)
+  $('#new-song-button').show()
+  $('#edit-playlist-button').show()
 }
 
 View.selectPlaylist = (id) => {
-  let previous = $$('#playlist-select > .selected')
+  let previous = $('#playlist-select > .selected')[0]
   if (previous) {
     previous.className = ''
   }
@@ -33,48 +34,48 @@ View.selectPlaylist = (id) => {
 }
 
 View.displayNewSong = (id, index, title, artist, callback) => {
-  let tr = create('tr')
+  let tr = document.createElement('tr')
   tr.id = id
   tr.onclick = () => { callback(tr) }
-  let td = create('td')
+  let td = document.createElement('td')
   td.innerHTML = index + 1
   td.className = 'song-number'
-  tr.appendChild(td)
-  td = create('td')
+  $(tr).append(td)
+  td = document.createElement('td')
   td.innerHTML = title
   td.className = 'song-title'
-  tr.appendChild(td)
-  td = create('td')
+  $(tr).append(td)
+  td = document.createElement('td')
   td.innerHTML = artist
   td.className = 'song-artist'
-  tr.appendChild(td)
-  td = create('td')
+  $(tr).append(td)
+  td = document.createElement('td')
   td.className = 'song-edit-buttons'
-  if ($$('th.song-edit-buttons').style.display == 'none') {
+  if ($('th.song-edit-buttons')[0].style.display == 'none') {
     td.style.display = 'none'
   }
   td.innerHTML = '<button onclick="moveUpButtonClick(event, this)">Up</button>' +
            '<button onclick="moveDownButtonClick(event, this)">Down</button>' +
            '<button onclick="removeSongButtonClick(event, this)">Delete</button>'
-  tr.appendChild(td)
-  $$('#songs').appendChild(tr)
+  $(tr).append(td)
+  $('#songs').append(tr)
 }
 
 View.displayAllSongs = (playlist, callback) => {
-  $$('#songs').innerHTML = ''
+  $('#songs').html('')
   if (playlist && playlist.songs) {
     if (playlist.songs.length > 0) {
       playlist.songs.forEach((song, index) => {
         View.displayNewSong(song._id, index, song.title, song.artist, callback)
       })
     } else {
-      hide('th.song-edit-buttons')
+      $('th.song-edit-buttons').hide()
     }
   }
 }
 
 View.displayAllPlaylists = (playlists) => {
-  $$('#playlist-select').innerHTML = ''
+  $('#playlist-select').html('')
   if (playlists) {
     playlists.forEach((playlist) => {
       View.displayNewPlaylist(playlist._id, playlist.name)
@@ -90,34 +91,34 @@ View.removeSongFromDisplay = (tr) => {
 View.setTimes = (time, duration) => {
   if (time) {
     let elapsedTime = parseInt(time / 60, 10) + ':' + ('0' + parseInt(time) % 60).slice(-2)
-    $$('#elapsedTime').innerHTML = elapsedTime
+    $('#elapsedTime').html(elapsedTime)
     let songTime = parseInt(duration / 60, 10) + ':' + ('0' + parseInt(duration) % 60).slice(-2)
-    $$('#songTime').innerHTML = songTime
+    $('#songTime').html(songTime)
   } else {
-    $$('#elapsedTime').innerHTML = '0:00'
-    $$('#songTime').innerHTML = '-:--'
+    $('#elapsedTime').html('0:00')
+    $('#songTime').html('-:--')
   }
-  $$('#time').value = 100 * time / duration || 0
+  $('#time').val(100 * time / duration || 0)
 }
 
 View.setPlayButtonText = (paused) => {
   if (paused) {
-    $$('#play-button').innerHTML = '&gt'
+    $('#play-button').html('&gt')
   } else {
-    $$('#play-button').innerHTML = '| |'
+    $('#play-button').html('| |')
   }
 }
 
 View.displayCurrentSong = (song) => {
   if (!song) {
-    $$('#current-song').innerHTML = ''
+    $('#current-song').html('')
   } else {
-    $$('#current-song').innerHTML = song.artist + ' - ' + song.title
+    $('#current-song').html(song.artist + ' - ' + song.title)
   }
 }
 
 View.highlightCurrentSong = (id) => {
-  let previous = $$('#song-table tbody > .playing')
+  let previous = $('#song-table tbody > .playing')[0]
   if (previous) {
     previous.className = ''
   }

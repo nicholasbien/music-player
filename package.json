@@ -20,6 +20,7 @@
     "lodash": "^4.13.1",
     "mongoose": "^4.5.5",
     "node-uuid": "^1.4.7",
-    "request": "^2.74.0"
+    "request": "^2.74.0",
+    "request-promise": "^4.1.1"
   }
 }

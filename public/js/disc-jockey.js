@@ -44,8 +44,6 @@ function DiscJockey() {
     currentTrack.pause()
   }
 
-
-
   this.startTrack = (index) => {
     if (currentTrack) {
       resetCurrentTrack()

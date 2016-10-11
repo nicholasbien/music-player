@@ -1,14 +1,12 @@
 'use strict'
 
 let express    = require('express')
-let Session    = require('express-session')
 let bodyParser = require('body-parser')
 let mongoose   = require('mongoose')
 let uuid       = require('node-uuid')
-let _          = require('lodash')
-let async      = require('async')
 let google     = require('googleapis')
 let jwt        = require('jsonwebtoken')
+let request    = require('request-promise')
 let exec       = require('child_process').exec
 
 let plus       = google.plus('v1')
@@ -36,36 +34,106 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname, 'public/index.html')
 })
 
-app.get('/search', (req, res) => {
-  var cmd = COMMAND + req.query.url
+app.post('/addPlaylist', (req, res) => {
+  let playlist = { _id: uuid.v1(), name: req.body.name, songs: [] }
+  let queryUser = User.update(
+    { _id: req.body.id },
+    { $push: { playlists: playlist._id } }
+  )
+  return Promise.all([queryUser, Playlist.create(playlist)])
+  .then((status) => {
+    if (status[0].ok === 1 && status[0].nModified === 1) {
+      res.status(200).json(playlist)
+    } else {
+      res.status(500).send(false)  
+    }
+  })
+  .catch((err) => {
+    console.error(err)
+    res.status(500).send(false)
+  })
+})
+
+app.post('/deletePlaylist', (req, res) => {
+  let queryUser = User.update(
+    { _id: req.body.id },
+    { $pull: { playlists: req.body.playlistId }}
+  )
+  let queryPlaylist = Playlist.remove(
+    { _id: req.body.playlistId }
+  )
+  return Promise.all([queryUser, queryPlaylist])
+  .then((status) => {
+    res.status(200).send(true)
+  })
+  .catch((err) => {
+    console.error(err)
+    res.status(500).send(false)
+  })
+})
+
+app.post('/renamePlaylist', (req, res) => {
+  return Playlist.update(
+    { _id: req.body.playlistId },
+    { $set: { name: req.body.name }}
+  )
+  .then((status) => {
+    if (status.ok === 1 && status.nModified === 1) {
+      res.status(200).send(true)
+    } else {
+      res.status(500).send(false)
+    }
+  })
+  .catch((err) => {
+    console.error(err)
+    res.status(500).send(false)
+  })
+})
+
+app.post('/addSong', (req, res) => {
+  let song = { _id: uuid.v1(), title: req.body.title, artist: req.body.artist, url: req.body.url }
+  let cmd = COMMAND + song.url
   exec(cmd, (error, stdout, stderr) => {
     if (stderr) {
-      res.status(400).json(stderr)
+      res.status(500).send(false)
     } else {
-      var streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-      res.status(200).json(streamUrl)
+      song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
+      let queryPlaylist = Playlist.update(
+        { _id: req.body.playlistId }, 
+        { $push: { songs: song._id }},
+        { new: true }
+      )
+      return Promise.all([queryPlaylist, Song.create(song)])
+      .then((status) => {
+        if (status[0].ok === 1 && status[0].nModified === 1) {
+          res.status(200).json(song)
+        } else {
+          res.status(500).send(false)  
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        res.status(500).send(false)
+      })
     }
   })
 })
 
-app.get('/user/:id', (req, res) => {
-  let id = req.params.id
-  User.findOne({_id: id}, (err, user) => {
-    res.status(200).json(user)
+app.post('/deleteSong', (req, res) => {
+  return Playlist.update(
+    { _id: req.body.playlistId },
+    { $pull: { songs: req.body.songId }}
+  )
+  .then((status) => {
+    if (status.ok === 1 && status.nModified === 1) {
+      res.status(200).json(true)
+    } else {
+      res.status(500).send(false)  
+    }
   })
-})
-
-app.get('/playlist/:id', (req, res) => {
-  let id = req.params.id
-  Playlist.findOne({_id: id}, (err, playlist) => {
-    async.forEachOf(playlist.songs, (id, index, callback) => {
-      Song.findOne({_id: id}, (err, song) => {
-        playlist.songs[index] = song
-        callback(err)
-      }, (err) => {
-        res.status(200).json(playlist)
-      })
-    })
+  .catch((err) => {
+    console.error(err)
+    res.status(500).send(false)
   })
 })
 
@@ -77,203 +145,79 @@ app.post('/login', (req, res) => {
     })
   })
   .then((resp) => {
-    User.findOne({ _id: resp.id }, (err, user) => {
-      if (user === null) {
-        res.status(200).json()
-        return
-      }
-      console.log()
-      if (user.playlists.length == 0) {
-        res.status(200).json(user)
-      }
-      let playlistsProcessed = 0
-      user.playlists.forEach((id, index) => {
-        Playlist.findOne({_id: id}, (err, playlist) => {
-          async.forEachOf(playlist.songs, (id, index, callback) => {
-            Song.findOne({_id: id}, (err, song) => {
-              playlist.songs[index] = song
-              callback(err)
-            })
-          }, (err) => {
-            user.playlists[index] = playlist
-            playlistsProcessed++
-            if (playlistsProcessed === user.playlists.length) {
-              res.status(200).json(user)
-            }
-          })
-        })
-      })
-    })
+    return User.findOne({ _id: resp.id }).lean()
   })
-})
-
-app.post('/register', (req, res) => {
-  let user = req.body
-  user._id = uuid.v1()
-  User.findOne({username: user.username}, (err, existingUser) => {
-    User.create(user, (err, user) => {
+  .then((user) => {
+    if (user === null) {
+      res.status(500).send(false)
+      return null
+    }
+    if (user.playlists.length == 0) {
       res.status(200).json(user)
+      return null
+    }
+    return getUserMusic(user)
+  })
+  .then((user) => {
+    if (user !== null) {
+      res.status(200).json(user)
+    }
+  })
+  .catch((err) => {
+    console.error(err)
+    res.status(500).send(false)
+  })
+})
+
+let getUserMusic = (user) => {
+  let playlistQueries = []
+  user.playlists.forEach((playlist) => {
+    playlistQueries.push(Playlist.findOne({ _id: playlist }).lean())
+  })
+  return Promise.all(playlistQueries)
+  .then((playlists) => {
+    playlists.forEach((playlist, index) => {
+      user.playlists[index] = playlist  
+      user.playlists[index].songs = getUserSongs(playlist.songs)
+      return user
     })
+    //return user
   })
-})
-
-app.post('/user/:id/playlist', (req, res) => {
-  let id = req.params.id
-  let playlist = req.body
-  playlist._id = uuid.v1()
-  Playlist.create(playlist, (err, playlist) => {
-    if (err) console.log(err)
-    User.findOneAndUpdate(
-      {_id: id},
-      {$push: {playlists: playlist._id}},
-      {new: true},
-      (err, user) => {
-        if (err) console.log(err)
-        res.status(200).json(playlist)
-      }
-    )
+  .then((res) => {
+    console.log(JSON.stringify(res, null, 2))
   })
-})
+}
 
-app.post('/playlist/:id/song', (req, res) => {
-  let id = req.params.id
-  let song = req.body
-  song._id = uuid.v1()
-  let cmd = COMMAND + song.url
-  exec(cmd, (error, stdout, stderr) => {
-    if (stderr) {
-      res.status(400).json()
-      return
-    }
-    song.streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-    Song.create(song, (err, song) => {
-      if (err) {
-        console.log(err)
-        res.status(400).json()
-        return
-      }
-      Playlist.findOneAndUpdate(
-        {_id: id}, 
-        {$push: {songs: song._id}},
-        {new: true},
-        (err, playlist) => {
-          if (err) {
-            console.log(err)
-            res.status(400).json()
-            return
-          }
-          res.status(200).json(song)
-      })
-    })
+let getUserSongs = (songs) => {
+  let songQueries = []
+  songs.forEach((song) => {
+    songQueries.push(Song.findOne({ _id: song }).lean())
   })
-})
-
-app.post('/playlist/:playlistId/song/:songId/delete', (req, res) => {
-  let playlistId = req.params.playlistId
-  let songId = req.params.songId
-  Playlist.findOneAndUpdate(
-    {_id: playlistId},
-    {$pull: {songs: songId}},
-    {new: true},
-    (err, playlist) => {
-      if (err) {
-        console.log(err)
-        res.status(400).json()
-        return
-      }
-      Song.remove({_id: songId}, (err) => {
-        if (err) {
-          console.log(err)
-          res.status(400).json()
-          return
-        }
-        res.status(200).json()
-      })
-    }
-  )
-})
-
-app.post('/song', (req, res) => {
-  let song = req.body
-  let cmd = COMMAND + song.url
-  exec(cmd, (error, stdout, stderr) => {
-    if (stderr) {
-      res.status(400).json()
-      return
-    }
-    let streamUrl = stdout.replace(/(\r\n|\n|\r)/gm,"")
-    Song.findOneAndUpdate(
-      {_id: song._id},
-      {streamUrl: streamUrl},
-      {new: true},
-      (err, song) => {
-        if (err) {
-          console.log(err)
-          res.status(400).json()
-          return
-        }
-        res.status(200).json(song)
-      }
-    )
+  return Promise.all(songQueries)
+  .then((songInfo) => {
+    return songInfo
   })
-})
+}
 
-app.post('/user/:userId/playlist/:playlistId/delete', (req, res) => {
-  let userId = req.params.userId
-  let playlistId = req.params.playlistId
-  User.findOneAndUpdate(
-    {_id: userId},
-    {$pull: {playlists: playlistId}},
-    {new: true},
-    (err, user) => {
-      if (err) {
-        console.log(err)
-        res.status(400).json()
-        return
-      }
-      Playlist.remove({_id: playlistId}, (err) => {
-        if (err) {
-          console.log(err)
-          res.status(400).json()
-          return
-        }
-        res.status(200).json()
-      })
-    }
-  )
-})
-
-app.post('/playlist/:id/rename', (req, res) => {
-  let id = req.params.id
-  let playlist = req.body
-  Playlist.findOneAndUpdate(
-    {_id: id},
-    {name: playlist.name},
-    {new: true},
-    (err, playlist) => {
-      if (err) {
-        console.log(err)
-        res.status(400).json()
-        return
-      }
-      res.status(200).json()
-    }
-  )
+let test = { "_id" : "106134473799137240152", "username" : "Vlad Chilom", "playlists" : [ "f93c0a40-7176-11e6-936f-4dbb7876c631", "fb85ac20-7176-11e6-936f-4dbb7876c631" ] }
+getUserMusic(test)
+.catch((err) => {
+  console.log(err)
 })
 
 app.get('/auth/google/request', (req, res) => {
   let oauthclient = new OAuth2(clientId, gSecret, redirect)
   let url = oauthclient.generateAuthUrl({
       access_type: 'offline',
-      scope: 'https://www.googleapis.com/auth/plus.profile.emails.read'
+      scope: 'https://www.googleapis.com/auth/userinfo.profile'
   })
   res.redirect(url)
 })
 
 app.get('/auth/google/callback', (req, res) => {
-  let id = uuid.v1()
-  let email = ''
+  let id, username, googleToken
   let oauthclient = new OAuth2(clientId, gSecret, redirect)
+  
   new Promise((resolve, reject) => {
     oauthclient.getToken(req.query.code, (err, tokens) => {
       if (err) reject(err)
@@ -281,6 +225,7 @@ app.get('/auth/google/callback', (req, res) => {
     })
   })
   .then((tokens) => {
+    googleToken = tokens.access_token
     oauthclient.setCredentials(tokens)
     return new Promise((resolve, reject) => {
       plus.people.get({ userId: 'me', auth: oauthclient }, (err, res) => {
@@ -290,17 +235,19 @@ app.get('/auth/google/callback', (req, res) => {
     })
   })
   .then((data) => {
-    email = data.emails[0].value
-    return User.findOne({ username: email })
+    id = data.id
+    username = data.displayName
+    return User.findOne({ _id: data.id })
   })
   .then((doc) => {
     if (doc === null) {
-      let user = new User({ _id: id, username: email, playlists: [] })
+      let user = new User({ _id: id, username: username, playlists: [] })
       return user.save()
-    } else {
-      id = doc.id
-      return true
     }
+    return true
+  })
+  .then((resp) => {
+    return request('https://accounts.google.com/o/oauth2/revoke?token=' + googleToken)
   })
   .then((resp) => {
     let token = jwt.sign({ id: id }, secret)

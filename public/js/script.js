@@ -7,30 +7,12 @@ let currentUser = null
 
 let dj = new DiscJockey()
 
-window.addEventListener('load', (event) => {
-  // currentPlaylist = Model.loadPlaylists();
-  // View.displayAllPlaylists(Model.getAllPlaylists());
-  // if (currentPlaylist) {
-  //     View.selectPlaylist($$('#playlist-select').childNodes[Model.getIndexOfPlaylist(currentPlaylist)]);
-  //     View.displayAllSongs(currentPlaylist, songClick);
-  // }
-})
-
 window.addEventListener('unload', (event) => {
   localStorage.clear()
 })
 
 let changeSong = (song) => {
   currentSong = song
-  if (currentSong) {
-    // dj.setTracklist(viewingPlaylist.songs)
-    // dj.startTrack(currentSong).catch((error) => {
-      // request('POST', '/song', song, (song) => {
-      //   currentSong = song
-      //   dj.startTrack(currentSong)
-      // })
-    //})
-  }
   View.setTimes(dj.getTime(), dj.getDuration())
   View.setPlayButtonText(dj.isPaused())
   View.displayCurrentSong(currentSong)
@@ -39,10 +21,6 @@ let changeSong = (song) => {
     View.highlightCurrentSong(song._id)
   }
 }
-
-// audio.addEventListener('ended', (event) => {
-//   changeSong(getNextSong())
-// })
 
 let moveTimeSlider = () => {
   if (dj.hasCurrentTrack()) {
@@ -53,13 +31,13 @@ let moveTimeSlider = () => {
 }
 
 let updateTime = () => {
-  View.setTimes($$('#time').value / 100 * dj.getDuration(), dj.getDuration())
+  View.setTimes($('#time').val() / 100 * dj.getDuration(), dj.getDuration())
 }
 
-let keepTime = setInterval(moveTimeSlider, 100)
+//let keepTime = setInterval(moveTimeSlider, 100)
 
 let timeChange = (input) => {
-  dj.setTime($$('#time').value / 100 * dj.getDuration() || 0)
+  dj.setTime($('#time').val() / 100 * dj.getDuration() || 0)
   keepTime = setInterval(moveTimeSlider, 100)
   input.removeEventListener('mousemove', updateTime)
 }
@@ -70,13 +48,13 @@ let mouseDownOnTime = (input) => {
 }
 
 let addPlaylistButtonClick = () => {
-  let name = $$('#new-playlist-name').value
+  let name = $('#new-playlist-name').val()
   if (name) {
     let playlist = {
       name: name,
-      songs: []
     }
     let url = '/user/' + currentUser._id + '/playlist'
+    // new playlist AJAX
     request('POST', url, playlist, (playlist) => {
       viewingPlaylist = playlist
       View.displayNewPlaylist(playlist._id, name)
@@ -90,7 +68,7 @@ let playlistSelect = (selected) => {
   currentUser.playlists.forEach((playlist) => {
     if (playlist._id === selected.id) {
       viewingPlaylist = playlist
-      $$('#songs').innerHTML = ''
+      $('#songs').html('')
       View.displayAllSongs(viewingPlaylist, songClick)
       View.selectPlaylist(selected.id)
       dj.preloadTracks(viewingPlaylist.songs)
@@ -110,14 +88,15 @@ let songClick = (tr) => {
 }
 
 let addSongButtonClick = () => {
-  let url = $$('#new-song-url').value
-  let title = $$('#new-song-title').value
-  let artist = $$('#new-song-artist').value
+  let url = $('#new-song-url')[0].val()
+  let title = $('#new-song-title')[0].val()
+  let artist = $('#new-song-artist')[0].val()
   let song = {
     url: url,
     title: title,
     artist: artist
   }
+  // add song AJAX
   let requestUrl = '/playlist/' + viewingPlaylist._id + '/song'
   request('POST', requestUrl, song, (song) => {
     if (song) {
@@ -185,20 +164,6 @@ let getNextSong = () => {
   }
 }
 
-let moveUpButtonClick = (event, button) => {
-//     event.stopPropagation();
-//     var tr = button.parentNode.parentNode;
-//     currentPlaylist = Model.moveSongUp(currentPlaylist, parseInt(tr.id, 10));
-//     View.displayAllSongs(currentPlaylist, songClick);
-}
-
-let moveDownButtonClick = (event, button) => {
-//     event.stopPropagation();
-//     var tr = button.parentNode.parentNode;
-//     currentPlaylist = Model.moveSongDown(currentPlaylist, parseInt(tr.id, 10));
-//     View.displayAllSongs(currentPlaylist, songClick);
-}
-
 let removeSongButtonClick = (event, button) => {
   event.stopPropagation()
   let tr = button.parentNode.parentNode
@@ -206,6 +171,7 @@ let removeSongButtonClick = (event, button) => {
   let playlistId = viewingPlaylist._id
   let songs = viewingPlaylist.songs
   let url = '/playlist/' + playlistId + '/song/' + songId + '/delete'
+  // delete song AJAX
   request('POST', url, null, () => {
     for (let i = 0; i < songs.length; i++) {
       if (songs[i]._id === songId) {
@@ -223,13 +189,14 @@ let volumeChange = (input) => {
 }
 
 let editPlaylistButtonClick = () => {
-  let newName = $$('#rename-playlist-box').value
+  let newName = $('#rename-playlist-box').val()
   if (newName === '') {
     return
   }
   viewingPlaylist.name = newName
   let playlistId = viewingPlaylist._id
   let url = '/playlist/' + playlistId + '/rename'
+  // edit playlist AJAX
   request('POST', url, viewingPlaylist, () => {
     View.displayAllPlaylists(currentUser.playlists)
     View.selectPlaylist(viewingPlaylist._id)
@@ -241,6 +208,7 @@ let removePlaylistButtonClick = () => {
   let playlistId = viewingPlaylist._id
   let url = '/user/' + userId + '/playlist/' + playlistId + '/delete'
   let playlists = currentUser.playlists
+  // delete playlist AJAX
   request('POST', url, null, () => {
     for (let i = 0; i < playlists.length; i++) {
       if (playlists[i]._id === playlistId) {
@@ -255,8 +223,8 @@ let removePlaylistButtonClick = () => {
     viewingPlaylist = currentUser.playlists[0] || null
     View.displayAllSongs(viewingPlaylist, songClick)
     if (viewingPlaylist) {
-        View.selectPlaylist(viewingPlaylist._id)
-        dj.preloadTracks(viewingPlaylist.songs)
+      View.selectPlaylist(viewingPlaylist._id)
+      dj.preloadTracks(viewingPlaylist.songs)
     }
   })
 }
@@ -265,6 +233,7 @@ let loginUser = (token) => {
   let user = {
     token: token
   }
+  // ajax login
   $.ajax({
     type: 'POST',
     url: '/login',
@@ -272,8 +241,10 @@ let loginUser = (token) => {
     success: (user) => {
       currentUser = user
       $('#loadingdiv').show()
+      $('#logout').show()
       setTimeout(() => { $('#loadingdiv').hide() }, 2500)
-      document.getElementById('userid').innerHTML = user.username
+      $('#userid').html(user.username)
+      console.log(user)
       let playlists = user.playlists
       View.displayAllPlaylists(playlists)
       if (playlists && playlists.length > 0) {
@@ -283,5 +254,11 @@ let loginUser = (token) => {
       View.displayAllSongs(viewingPlaylist, songClick)
     },
     dataType: 'json'
+  })
+}
+
+let logoutUser = () => {
+  document.cookie.split(";").forEach(function(c) {
+    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/")
   })
 }

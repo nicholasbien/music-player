@@ -1,93 +1,84 @@
 'use strict'
 
-hide('#new-playlist-form')
-hide('#edit-playlist-button')
-hide('#register-form')
-hide('#new-song-button')
-hide('#edit-playlist-form')
-hide('#new-song-form')
-hide('th.song-edit-buttons')
+$('#new-playlist-form').hide()
+$('#edit-playlist-button').hide()
+$('#new-song-button').hide()
+$('#edit-playlist-form').hide()
+$('#new-song-form').hide()
+$('th.song-edit-buttons').hide()
 
-$$('#playlist-select').addEventListener('click', () => {
-  if (event.target) {
-    playlistSelect(event.target)
-  }
+$('#playlist-select').click(() => { playlistSelect(event.target) })
+
+$('#new-playlist-button').click(() => {
+  $('#new-playlist-button').hide()
+  $('#new-playlist-form').show()
+  $('#edit-playlist-button').hide()
 })
 
-$$('#new-playlist-button').addEventListener('click', () => {
-  hide('#new-playlist-button')
-  show('#new-playlist-form')
-  hide('#edit-playlist-button')
-})
-
-$$('#new-playlist-form').addEventListener('submit', (event) => {
+$('#new-playlist-form').submit((event) => {
   event.preventDefault()
-  $$('#new-playlist-form').reset()
-  hide('#new-playlist-form')
-  if ($$('.selected')) {
-    show('#edit-playlist-button')
+  $('#new-playlist-form')[0].reset()
+  $('#new-playlist-form').hide()
+  if ($('.selected').length) {
+    $('#edit-playlist-button').show()
   }
-  show('#new-playlist-button')
+  $('#new-playlist-button').show()
 })
 
-$$('#new-playlist-submit').addEventListener('click', addPlaylistButtonClick)
+$('#new-playlist-submit').click(addPlaylistButtonClick)
 
-$$('#edit-playlist-button').addEventListener('click', () => {
-  hide('#edit-playlist-button')
-  hide('#new-playlist-button')
-  show('#edit-playlist-form')
-  if ($$('#song-table td')) {
-    show('.song-edit-buttons')
+$('#edit-playlist-button').click(() => {
+  $('#edit-playlist-button').hide()
+  $('#new-playlist-button').hide()
+  $('#edit-playlist-form').show()
+  if ($('#song-table td').length) {
+    $('.song-edit-buttons').show()
   }
 })
 
-$$('#edit-playlist-form').addEventListener('submit', (event) => {
+$('#edit-playlist-form').submit((event) => {
   event.preventDefault()
-  $$('#edit-playlist-form').reset()
-  show('#new-playlist-button')
-  hide('#edit-playlist-form')
-  hide('.song-edit-buttons')
-  if ($$('.selected')) {
-    show('#edit-playlist-button')
+  $('#edit-playlist-form')[0].reset()
+  $('#new-playlist-button').show()
+  $('#edit-playlist-form').hide()
+  $('.song-edit-buttons').hide()
+  if ($('.selected').length) {
+    $('#edit-playlist-button').show()
   } else {
-    hide('#new-song-button')
+    $('#new-song-button').hide()
   }
 })
 
-$$('#delete-playlist-button').addEventListener('click', removePlaylistButtonClick)
+$('#delete-playlist-button').click(removePlaylistButtonClick)
 
-$$('#edit-playlist-submit').addEventListener('click', editPlaylistButtonClick)
+$('#edit-playlist-submit').click(editPlaylistButtonClick)
 
-$$('#volume').addEventListener('mousemove', () => {
-  volumeChange($$('#volume'))
+$('#volume').mousemove(() => { volumeChange($('#volume')[0]) })
+
+$('#volume').change(() => { volumeChange($('#volume')[0]) })
+
+$('#time').mousedown(() => { mouseDownOnTime($('#time')[0]) })
+
+$('#time').change(() => { timeChange($('#time')[0]) })
+
+$('#previous-button').click(previousButtonClick)
+
+$('#play-button').click(playButtonClick)
+
+$('#next-button').click(nextButtonClick)
+
+$('#new-song-button').click(() => {
+  $('#new-song-form').show()
+  $('#new-song-button').hide()
 })
 
-$$('#volume').addEventListener('change', () => {
-  volumeChange($$('#volume'))
-})
-
-$$('#time').addEventListener('mousedown', () => {
-  mouseDownOnTime($$('#time'))
-})
-
-$$('#time').addEventListener('change', () => {
-  timeChange($$('#time'))
-})
-
-$$('#previous-button').addEventListener('click', previousButtonClick)
-$$('#play-button').addEventListener('click', playButtonClick)
-$$('#next-button').addEventListener('click', nextButtonClick)
-
-$$('#new-song-button').addEventListener('click', () => {
-  show('#new-song-form')
-  hide('#new-song-button')
-})
-
-$$('#new-song-form').addEventListener('submit', (event) => {
+$('#new-song-form').submit((event) => {
   event.preventDefault()
-  $$('#new-song-form').reset()
-  hide('#new-song-form')
-  show('#new-song-button')
+  $('#new-song-form')[0].reset()
+  $('#new-song-form').hide()
+  $('#new-song-button').show()
 })
 
-$$('#new-song-submit').addEventListener('click', addSongButtonClick)
+$('#new-song-submit').click(addSongButtonClick)
+
+$('#logout').click(logoutUser)

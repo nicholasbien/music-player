@@ -3,22 +3,31 @@
 <head>
   <title>Music Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/css/site.css">
-  <link rel="stylesheet" href="/css/music.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/progressbar.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <!-- <script src="/js/jquery-3.1.0.min.js"></script> -->
 </head>
 
 <body>
 
   <div id="loadingdiv">
-    <img id="loadingring" src="./img/ring.svg">
+    <div id="loadingbar"></div>
   </div>
 
-  <script> $('#loadingdiv').show(); setTimeout(() => { $('#loadingdiv').hide() }, 2500) </script>
+  <script> 
+    $('#loadingdiv').show()
+    var bar = new ProgressBar.Line(loadingbar, { easing: 'easeInOut', strokeWidth: 0.5, duration: 2500, color: '#000000' })
+    bar.animate(1)
+    setTimeout(() => { $('#loadingdiv').hide() }, 2500)
+  </script>
 
   <div id="header">
     <div class="left">
       <span id="header-title">Music Player</span>
+    </div>
+    <div class="right" id="logout">
+      <a href="/">Logout</a>
     </div>
     <div class="right">
       <div id='userid'>
@@ -28,7 +37,6 @@
     <div id="precache">
       <img src="./img/btn_google_signin_dark_focus_web@2x.png">
       <img src="./img/btn_google_signin_dark_pressed_web@2x.png">
-      <img src="./img/ring.svg">
     </div>
     <div class="right">
       <a id="github" href="https://github.com/nicholasbien/music-player">View Source on GitHub</a>
